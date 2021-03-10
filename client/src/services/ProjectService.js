@@ -3,8 +3,7 @@ import axios from "axios";
 export default class ProjectService {
     url = '/api/projects';
 
-    constructor(url) {
-        this.url = url;
+    constructor() {
     }
 
     retrive() {
@@ -12,9 +11,12 @@ export default class ProjectService {
     }
 
     get(id) {
+        console.log('SERVICE: ', id)
         return axios.get(`${this.url}/${id}`).then(res => res.data);
     }
     // put()
     // post()
-    // delete(id)
+    delete(ids) {
+        // IMPLENMNT PROJECT DELETION HERE
+    }
 }

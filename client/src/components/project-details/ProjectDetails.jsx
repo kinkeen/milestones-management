@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
+import {
+  useParams
+} from "react-router-dom";
+
 import { Timeline } from "primereact/timeline";
 import { Card } from "primereact/card";
-import { Button } from "primereact/button";
+import { InputText } from 'primereact/inputtext';
 
 
 import './ProjectDetails.scss';
@@ -9,18 +13,22 @@ import './ProjectDetails.scss';
 import ProjectService from "../../services/ProjectService";
 
 const ProjectDetails = () => {
-  const [projects, setProjects] = useState(null);
+  const [project, setProject] = useState({});
   const [loading, setLoading] = useState(false);
+  let { id } = useParams();
 
   const service = new ProjectService();
 
   useEffect(() => {
-    service.retrive().then((data) => {
-      setProjects(data);
+    service.get(id).then((data) => {
+
+      console.log(data)
+
+      setProject(data);
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const events1 = [
+  const milestones = [
     {
       status: "Ordered",
       date: "15/10/2020 10:30",
@@ -61,25 +69,7 @@ const ProjectDetails = () => {
   const customizedContent = (item) => {
     return (
       <Card title={item.status} subTitle={item.date}>
-        {item.image && (
-          <img
-            /*src={`showcase/demo/images/product/${item.image}`}
-            onError={(e) =>
-              (e.target.src =
-                "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-            }
-            alt={item.name}
-            width={200}
-            className="p-shadow-2"*/
-          />
-        )}
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore
-          sed consequuntur error repudiandae numquam deserunt quisquam repellat
-          libero asperiores earum nam nobis, culpa ratione quam perferendis
-          esse, cupiditate neque quas!
-        </p>
-        <Button label="Read more" className="p-button-text"></Button>
+
       </Card>
     );
   };
@@ -87,12 +77,26 @@ const ProjectDetails = () => {
   return (
     <div>
       <Card>
-       Project name <br />
-       Due ate
+        <h3><b>ID:</b>{id}</h3>
+        <b>Project name:  </b>{project.name} <br />
+        <b>actualPrice:  </b> {project.actualPrice} <br />
+        <b>dateEnd:  </b>{project.dateEnd} <br />
+        <b>description:  </b>{project.description} <br />
+        <b>estimateDateEnd:  </b>{project.estimateDateEnd} <br />
+        <b>estimatePrice:  </b>{project.estimatePrice} <br />
+
+        {/*<InputText keyfilter="int" placeholder=""/>
+        <InputText placeholder="Project name" {...project.name}/>
+        <InputText placeholder="description" {...project.description}/>
+        <InputText placeholder="estimatePrice"  {...project.estimatePrice} />
+        <InputText placeholder="actualPrice"  {...project.actualPrice} />
+        <InputText placeholder="estimateDateEnd"  {...project.estimateDateEnd} />
+  <InputText placeholder="dateEnd"  {...project.dateEnd}/>*/}
+
       </Card>
 
       <Timeline
-        value={events1}
+        value={milestones}
         align="alternate"
         className="customized-timeline"
         marker={customizedMarker}

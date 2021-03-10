@@ -2,7 +2,7 @@ const ProjectModel = require("../models/project.model");
 
 const projects = require('../../data/seeds/projects.json')
 
-/* static milestone service class */
+/* static project service class */
 class ProjectService {
 
 	static retrieve() {
@@ -10,13 +10,13 @@ class ProjectService {
 	}
 
 	static get(id) {
-		const milestone = projects.data.find(milestone => milestone.id == id)
+		const project = projects.data.find(project => project.id == id)
 
-		if (milestone != null) {
-			return milestone;
+		if (project != null) {
+			return project;
 		}
 		else {
-			throw new Error('Unable to retrieve a milestone by (id:' + id + ')');
+			throw new Error('Unable to retrieve a project by (id:' + id + ')');
 		}
 	}
 
@@ -24,74 +24,74 @@ class ProjectService {
 
 		let { name, status, priority, country } = data;
 
-		let milestone = new IncidentModel(name, status, priority, country);
+		let project = new IncidentModel(name, status, priority, country);
 
-		projects.data.push(milestone);
+		projects.data.push(project);
 
-		return milestone;
+		return project;
 	}
 
 	static update(id, data) {
-		const milestone = projects.data.find(milestone => milestone.id == id);
+		const project = projects.data.find(project => project.id == id);
 
-		if (milestone.audits === undefined) {
-			milestone.audits = [];
+		if (project.audits === undefined) {
+			project.audits = [];
 		}
 
-		if (data['status'] != milestone['status']) {
-			milestone.audits.push({
-				title: `milestone ${data['status']}`,
-				message: 'milestone status from {1} to {2}',
+		if (data['status'] != project['status']) {
+			project.audits.push({
+				title: `project ${data['status']}`,
+				message: 'project status from {1} to {2}',
 				property: 'status',
-				from: milestone['status'],
+				from: project['status'],
 				to: data['status'],
 				updated: new Date()
 			});
 
-			milestone['status'] = data['status'];
+			project['status'] = data['status'];
 		}
 
-		if (data['name'] != milestone['name']) {
-			milestone.audits.push({
-				title: `milestone ${data['name']}`,
-				message: 'milestone name from {1} to {2}',
+		if (data['name'] != project['name']) {
+			project.audits.push({
+				title: `project ${data['name']}`,
+				message: 'project name from {1} to {2}',
 				property: 'name',
-				from: milestone['name'],
+				from: project['name'],
 				to: data['name'],
 				updated: new Date()
 			});
-			milestone['name'] = data['name'];
+			project['name'] = data['name'];
 		}
 
-		if (data['priority'] != milestone['priority']) {
-			milestone.audits.push({
-				title: `milestone ${data['priority']}`,
-				message: 'milestone priority from {1} to {2}',
+		if (data['priority'] != project['priority']) {
+			project.audits.push({
+				title: `project ${data['priority']}`,
+				message: 'project priority from {1} to {2}',
 				property: 'priority',
-				from: milestone['priority'],
+				from: project['priority'],
 				to: data['priority'],
 				updated: new Date()
 			});
-			milestone['priority'] = data['priority'];
+			project['priority'] = data['priority'];
 		}
 
-		if (data['country'] != milestone['country']) {
-			milestone.audits.push({
-				title: `milestone ${data['country']}`,
-				message: 'milestone country from {1} to {2}',
+		if (data['country'] != project['country']) {
+			project.audits.push({
+				title: `project ${data['country']}`,
+				message: 'project country from {1} to {2}',
 				property: 'country',
-				from: milestone['country'],
+				from: project['country'],
 				to: data['country'],
 				updated: new Date()
 			});
-			milestone['country'] = data['country'];
+			project['country'] = data['country'];
 		}
 
-		return milestone;
+		return project;
 	}
 
 	static delete(id) {
-		const idx = projects.data.findIndex(milestone => milestone.id == id);
+		const idx = projects.data.findIndex(project => project.id == id);
 		delete projects.data[idx];
 	}
 }

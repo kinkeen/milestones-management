@@ -1,29 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
+import moment from 'moment'
 
-import classNames from 'classnames';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
-import { FileUpload } from 'primereact/fileupload';
-import { Rating } from 'primereact/rating';
 import { Toolbar } from 'primereact/toolbar';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { RadioButton } from 'primereact/radiobutton';
-import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+
+import { confirmDialog } from 'primereact/confirmdialog'; // To use confirmDialog method
 
 import './ProjectList.scss';
 
 import ProjectService from "../../services/ProjectService";
 import ProjectForm from '../project-form/ProjectForm'
 
+import conf from '../../helpers/Configuration';
 
 const ProjectList = () => {
   let emptyProject = {
     id: null,
-    ownerId: null,  
+    ownerId: null,
     name: '',
     description: '',
     dateStart: null,
@@ -34,36 +33,55 @@ const ProjectList = () => {
     milestones: [],
     users: []
   };
+
   const [projects, setProjects] = useState(null);
   const [projectDialog, setProjectDialog] = useState(false);
+
   const [deleteProjectDialog, setDeleteProjectDialog] = useState(false);
   const [deleteProjectsDialog, setDeleteProjectsDialog] = useState(false);
+
   const [project, setProject] = useState(emptyProject);
   const [selectedProjects, setSelectedProjects] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
+
   const toast = useRef(null);
   const dt = useRef(null);
-
-
-
-  // const ProjectService = new ProjectService();
-  // useEffect(() => {
-  //   ProjectService.getProducts().then(data => setProducts(data));
-  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
 
   const service = new ProjectService();
 
   useEffect(() => {
     service.retrive().then((data) => {
-      console.log(data)
       setProjects(data);
     });
   }, []);
 
+  const confirm = () => {
+    confirmDialog({
+      message: 'Are you sure you want to delete the selected projects?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => acceptFunc(),
+      reject: () => rejectFunc()
+    });
+  }
+
+  const acceptFunc = () => {
+    const ids = selectedProjects.map(item => item.id);
+    let _projects = projects.filter(val => !selectedProjects.includes(val));
+    setProjects(_projects);
+    setSelectedProjects(null);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Project Deleted', life: 3000 });
+    //this.service.delete(ids)
+    console.log('acceptFunc', _projects)
+  }
+
+  const rejectFunc = () => {
+    console.log('rejectFunc')
+  }
+
   const formatCurrency = (value) => {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    return value.toLocaleString('en-CA', { style: 'currency', currency: 'CND' });
   }
 
   const openNew = () => {
@@ -110,15 +128,10 @@ const ProjectList = () => {
     }
   }
 
-  const editProject = (project) => {
-    setProject({ ...project });
-    setProjectDialog(true);
-  }
-
-  const confirmDeleteProject = (project) => {
-    setProject(project);
-    //setDeleteProjectDialog(true);
-  }
+  /*  const editProject = (project) => {
+      setProject({ ...project });
+      setProjectDialog(true);
+    }*/
 
   const deleteProject = () => {
     let _projects = projects.filter(val => val.id !== project.id);
@@ -149,14 +162,6 @@ const ProjectList = () => {
     return id;
   }
 
-  const exportCSV = () => {
-    dt.current.exportCSV();
-  }
-
-  const confirmDeleteSelected = () => {
-    //setDeleteProjectsDialog(true);
-  }
-
   const deleteSelectedProjects = () => {
     let _projects = projects.filter(val => !selectedProjects.includes(val));
     setProjects(_projects);
@@ -169,44 +174,44 @@ const ProjectList = () => {
     return (
       <React.Fragment>
         <Button label="New" icon="pi pi-plus" className="p-button-success p-mr-2" onClick={openNew} />
-        <Button label="Delete" icon="pi pi-trash" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedProjects || !selectedProjects.length} />
+        <Button label="Delete" icon="pi pi-trash" className="p-button-danger" onClick={confirm} disabled={!selectedProjects || !selectedProjects.length} />
       </React.Fragment>
     )
   }
 
-  const rightToolbarTemplate = () => {
-    return (
-      <React.Fragment>
-        <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} label="Import" chooseLabel="Import" className="p-mr-2 p-d-inline-block" />
-        <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={exportCSV} />
-      </React.Fragment>
-    )
+  const nameBodyTemplate = (rowData) => {
+    return rowData.name;
   }
 
-  const imageBodyTemplate = (rowData) => {
-    return <img src={`showcase/demo/images/project/${rowData.image}`} onError={(e) => e.target.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={rowData.image} className="project-image" />
+  const dateStartBodyTemplate = (rowData) => {
+    return moment(rowData.dateStart).format(conf.dateFormat);
   }
 
-  const priceBodyTemplate = (rowData) => {
-    return formatCurrency(rowData.price);
+  const dateEndBodyTemplate = (rowData) => {
+    return moment(rowData.dateEndBodyTemplate).format(conf.dateFormat);
   }
 
-  const ratingBodyTemplate = (rowData) => {
-    return <Rating value={rowData.rating} readOnly cancel={false} />;
+  const descriptionBodyTemplate = (rowData) => {
+    //return <span className={`project-badge status-${rowData.inventoryStatus.toLowerCase()}`}>{rowData.inventoryStatus}</span>;
+    return rowData.description;
   }
 
-  const statusBodyTemplate = (rowData) => {
-    return <span className={`project-badge status-${rowData.inventoryStatus.toLowerCase()}`}>{rowData.inventoryStatus}</span>;
+  const estimatePriceBodyTemplate = (rowData) => {
+    return formatCurrency(rowData.estimatePrice);
   }
 
-  const actionBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2" onClick={() => editProject(rowData)} />
-        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDeleteProject(rowData)} />
-      </React.Fragment>
-    );
+  const actualPricePriceBodyTemplate = (rowData) => {
+    return formatCurrency(rowData.actualPrice);
   }
+
+  const milestoneseBodyTemplate = (rowData) => {
+    return formatCurrency(rowData.milestones); // milestones: []
+  }
+
+  /*const usersBodyTemplate = (rowData) => {
+    return formatCurrency(rowData.users); /// users: []
+  }*/
+
 
   const header = (
     <div className="table-header">
@@ -217,6 +222,7 @@ const ProjectList = () => {
       </span>
     </div>
   );
+
   const projectDialogFooter = (
     <React.Fragment>
       <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
@@ -238,34 +244,48 @@ const ProjectList = () => {
     </React.Fragment>
   );
 
+  const actionBodyTemplate = (rowData) => {
+    return (
+      <span>
+        <Button type="button" icon="pi pi-trash" className="p-button-secondary"></Button>
+        <Link to={`/projects/${rowData.id}`} >
+          <Button type="button" icon="pi pi-external-link" className="p-button-secondary"></Button>
+        </Link>
+      </span>
+    );
+  }
+  
   return (
     <div className="datatable-crud-demo">
       <Toast ref={toast} />
 
       <div className="card">
-        <Toolbar className="p-mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
-
+        <Toolbar className="p-mb-4" left={leftToolbarTemplate}></Toolbar>
         <DataTable ref={dt} value={projects} selection={selectedProjects} onSelectionChange={(e) => setSelectedProjects(e.value)}
           dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
           paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} projects"
           globalFilter={globalFilter}
           header={header}>
-
-          <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-          <Column field="id" header="id" sortable></Column>
-          <Column field="ownerId" header="ownerId" sortable></Column>
+          {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
+          {/* <Column field="id" header="id" d></Column>
+          <Column field="ownerId" header="ownerId" body={ownerIdBodyTemplate} sortable></Column> */}
           {/* <Column header="Image" body={imageBodyTemplate}></Column> */}
-          <Column field="name" header="name" body={priceBodyTemplate} sortable></Column>
-          <Column field="description" header="description" sortable></Column>
-          <Column field="dateStart" header="dateStart" body={ratingBodyTemplate} sortable></Column>
-          <Column field="dateEnd" header="dateEnd" body={statusBodyTemplate} sortable></Column>
-          <Column body={actionBodyTemplate}></Column>
+          <Column field="name" header="name" body={nameBodyTemplate} sortable></Column>
+          <Column field="description" header="description" body={descriptionBodyTemplate} sortable></Column>
+          <Column field="dateStart" header="dateStart" body={dateStartBodyTemplate} sortable></Column>
+          <Column field="dateEnd" header="dateEnd" body={dateEndBodyTemplate} sortable></Column>
+          <Column field="estimatePrice" header="estimatePrice" body={estimatePriceBodyTemplate} sortable></Column>
+          <Column field="actualPrice" header="actualPrice" body={actualPricePriceBodyTemplate} sortable></Column>
+          <Column field="milestonese" header="milestonese" body={milestoneseBodyTemplate} sortable></Column>
+
+
+          <Column body={actionBodyTemplate} headerStyle={{ width: '8em', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} />
         </DataTable>
       </div>
 
       <Dialog visible={projectDialog} style={{ width: '450px' }} header="Project Details" modal className="p-fluid" footer={projectDialogFooter} onHide={hideDialog}>
-        <ProjectForm project={project} />       
+        <ProjectForm project={project} />
       </Dialog>
 
       <Dialog visible={deleteProjectDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteProjectDialogFooter} onHide={hideDeleteProjectDialog}>
@@ -275,7 +295,9 @@ const ProjectList = () => {
         </div>
       </Dialog>
 
-      <Dialog visible={deleteProjectsDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteProjectsDialogFooter} onHide={hideDeleteProjectsDialog}>
+      <Dialog visible={deleteProjectsDialog} style={{ width: '450px' }} header="Confirm" modal
+        footer={deleteProjectsDialogFooter}
+        onHide={hideDeleteProjectsDialog}>
         <div className="confirmation-content">
           <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem' }} />
           {project && <span>Are you sure you want to delete the selected projects?</span>}
@@ -286,29 +308,3 @@ const ProjectList = () => {
 };
 
 export default ProjectList;
-
-// const [projects, setProjects] = useState(null);
-//   const [loading, setLoading] = useState(false);
-
-//   const service = new ProjectService();
-
-//   useEffect(() => {
-//     service.getProducts().then((data) => {
-//       setProjects(data);
-//     });
-//   }, []);
-
-//   return (
-//     <div>
-
-// <Link to="/projects/new">projects</Link>
-//       <Card>
-//         <DataTable value={projects} paginator  rows={10} className="p-datatable-striped">
-//           <Column field="code" header="Code"></Column>
-//           <Column field="name" header="Name"></Column>
-//           <Column field="category" header="Category"></Column>
-//           <Column field="quantity" header="Quantity"></Column>
-//         </DataTable>
-//       </Card>
-//     </div>
-//   );
