@@ -26,5 +26,67 @@
     }
     .timeline-demo .customized-timeline .p-card {
         margin-top: 1rem;
+    
+    }
+}
+
+
+
+
+.x-timeline {
+    
+    .p-card {
+        overflow: hidden;
+        &.x-collapsed {
+            height: 85px;
+        }
+
+        &.x-expanded {
+            height: 375px;
+        }
+    }
+}
+
+.p-timeline-event {
+    display: flex;
+    
+
+    .x-toolbar {
+        display: flex;
+        > span {
+            i {
+                cursor: pointer;
+                margin: 2px;
+                padding: 2px;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+            }
+        }
+    }
+    &:nth-child(odd) {
+        .x-toolbar {
+            > span {
+                &:nth-of-type(2) { 
+                    order: 2; 
+                }
+                &:nth-of-type(1) { 
+                    order: 1; 
+                    flex: 1;
+                }
+            }
+        }
+    }
+    &:nth-child(even) {
+        .x-toolbar {
+            > span {
+                &:nth-of-type(1) { 
+                    order: 2; 
+                    flex: 1;
+                }
+                &:nth-of-type(2) { 
+                    order: 1; 
+                }
+            }
+        }
     }
 }

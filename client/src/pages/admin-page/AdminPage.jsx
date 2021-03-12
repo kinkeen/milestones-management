@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link, Redirect, useRouteMatch } from "react-router-dom";
 
 import { Toolbar } from 'primereact/toolbar';
 import { Menu } from 'primereact/menu';
@@ -14,7 +14,15 @@ import './AdminPage.scss'
 
 const AdminPage = ({ logout }) => {
   const [visibleLeft, setVisibleLeft] = useState(false);
+  const [visibleRigth, setVisibleRigth] = useState(false);
   const menu = useRef(null);
+
+  // The `path` lets us build <Route> paths that are
+  // relative to the parent route, while the `url` lets
+  // us build relative links.
+
+  let { path, url } = useRouteMatch();
+
   const userMenu = [
     {
       label: 'Options',
@@ -50,27 +58,44 @@ const AdminPage = ({ logout }) => {
     </React.Fragment>
   );
 
-  return (
+ return (
     <div>
       <Toolbar left={leftContents} right={rightContents} />
       <Router>
-        <Sidebar visible={visibleLeft} baseZIndex={1000000} onHide={() => setVisibleLeft(false)}>
+        <Sidebar visible={visibleLeft} baseZIndex={1000000} onHide={() => setVisibleLeft(false)} showCloseIcon={false}> 
           <div className="p-tieredmenu p-component">
             <ul role="menubar" aria-orientation="horizontal">
+
               <li className="p-menuitem" role="none">
-                <Link to="/projects">
+                  <Link to='/projects'>
+                    <span className="p-menuitem-icon pi pi-fw pi-file"></span>
+                    <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>Projects </span>
+                  </Link>
+              </li>
+              <li className="p-menuitem" role="none">
+                <Link to='/projects/new'>
                   <span className="p-menuitem-icon pi pi-fw pi-file"></span>
-                  <span className="p-menuitem-text">
-                    Projects
-                  </span>
+                  <span className="p-menuitem-text" onClick={() => {
+                    setVisibleLeft(false);
+                    //visibleRigth(true);
+                  }} >New Project</span>
                 </Link>
               </li>
+
               <li className="p-menuitem" role="none">
                 <Link to="/users">
                   <span className="p-menuitem-icon pi pi-fw pi-user"></span>
-                  <span className="p-menuitem-text">Users</span>
+                  <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>Users</span>
                 </Link>
               </li>
+
+              <li className="p-menuitem" role="none">
+                <Link to="/users/new">
+                  <span className="p-menuitem-icon pi pi-fw pi-user"></span>
+                  <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>New Users</span>
+                </Link>
+              </li>
+
               <li className="p-menu-separator" role="separator"></li>
               <li className="p-menuitem" role="none"><a href="#" className="p-menuitem-link" role="menuitem" aria-haspopup="false">
                 <span className="p-menuitem-icon pi pi-fw pi-power-off"></span>
@@ -94,6 +119,7 @@ const AdminPage = ({ logout }) => {
           <Route path='/milestone/:id'>
             <MilestoneDetails />
           </Route>
+          
         </Switch>
       </Router>
     </div>

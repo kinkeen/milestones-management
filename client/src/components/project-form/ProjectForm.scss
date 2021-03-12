@@ -1,0 +1,22 @@
+
+.p-sidebar-content{
+    
+    flex: 1 1 auto;
+    height: calc( 100vh - 25px );
+    display: flex;
+    flex-direction: column;
+
+    main {
+        flex: 1 1 auto;
+    }
+
+    footer {
+        height: 60px;
+        border-top: 1px solid #ced4da;
+        padding-top: 5px;
+
+        button {
+            margin-right: 10px;
+        }
+    }
+}

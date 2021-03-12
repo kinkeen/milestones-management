@@ -1,49 +1,65 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import classNames from 'classnames';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
-import { FileUpload } from 'primereact/fileupload';
-import { Rating } from 'primereact/rating';
-import { Toolbar } from 'primereact/toolbar';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { RadioButton } from 'primereact/radiobutton';
-import { InputNumber } from 'primereact/inputnumber';
-import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { Calendar } from 'primereact/calendar';
+import 'primeflex/primeflex.css';
 
-const ProjectForm = () => {
+import './ProjectForm.scss'
+import ProjectService from "../../services/ProjectService";
 
-    let emptyProject = {
-        id: null,
-        ownerId: null,  
-        name: '',
-        description: '',
-        dateStart: null,
-        dateEnd: null,
-        estimateDateEnd: 0,
-        estimatePrice: 0,
-        actualPrice: 0,
-        milestones: [],
-        users: []
-      };
-
-    const [projects, setProjects] = useState(null);
-    const [project, setProject] = useState(emptyProject);
+const ProjectForm = (props) => {
     const [submitted, setSubmitted] = useState(false);
+    const [project, setProject] = useState(props.project);
 
-    const onCategoryChange = (e) => {
+    const service = new ProjectService();
+
+    useEffect(() => {
+        console.log('PROJECT: ', project)
+
+    }, [project])
+
+    const doClose = () => {
+        if (props.closeHandler instanceof Function) {
+            props.closeHandler(false)
+        }
+    }
+
+    const doSave = () => {
+        service.post(project)
+        if (props.saveHandler instanceof Function) {
+            props.saveHandler(project)
+        }
+        else {
+            // PUT HERE SAVE PROJECT 
+        }
+    }
+
+
+    const onInputChange = (e, name) => {
+
+        const val = (e.target && e.target.value) || '';
+
         let _project = { ...project };
-        _project['category'] = e.value;
+        _project[name] = val;
+
+        console.log()
+
         setProject(_project);
     }
 
-    const onInputChange = (e, name) => {
-        const val = (e.target && e.target.value) || '';
+    const onDateChange = (val, name) => {
+
+        // debugger
+        //change textInput
+        // const val = (e.target && e.target.value) || '';
+        //change numberInput
+        //const val = e.value || 0;
+
         let _project = { ...project };
-        _project[`${name}`] = val;
+        _project[name] = val;
+
 
         setProject(_project);
     }
@@ -56,53 +72,74 @@ const ProjectForm = () => {
         setProject(_project);
     }
 
-
     return (
         <React.Fragment>
-            {project.image && <img src={`showcase/demo/images/project/${project.image}`} onError={(e) => e.target.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={project.image} className="project-image" />}
-            <div className="p-field">
-                <label htmlFor="name">Name</label>
-                <InputText id="name" value={project.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !project.name })} />
-                {submitted && !project.name && <small className="p-error">Name is required.</small>}
-            </div>
+            <main>
+            <h3><b>Project:</b></h3> 
 
-            <div className="p-field">
-                <label htmlFor="description">Description</label>
-                <InputTextarea id="description" value={project.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
-            </div>
+                <div className="p-fluid">
 
-            <div className="p-field">
-                <label className="p-mb-3">Category</label>
-                <div className="p-formgrid p-grid">
-                    <div className="p-field-radiobutton p-col-6">
-                        <RadioButton inputId="category1" name="category" value="Accessories" onChange={onCategoryChange} checked={project.category === 'Accessories'} />
-                        <label htmlFor="category1">Accessories</label>
+                    <div className="p-field p-grid">
+                        <label htmlFor="id" className="p-col-12 p-md-3">ID</label>
+                        <div className="p-col-6 p-md-9">
+                            <InputText id="id" type="text" value={project.id} disabled/>
+                        </div>
                     </div>
-                    <div className="p-field-radiobutton p-col-6">
-                        <RadioButton inputId="category2" name="category" value="Clothing" onChange={onCategoryChange} checked={project.category === 'Clothing'} />
-                        <label htmlFor="category2">Clothing</label>
-                    </div>
-                    <div className="p-field-radiobutton p-col-6">
-                        <RadioButton inputId="category3" name="category" value="Electronics" onChange={onCategoryChange} checked={project.category === 'Electronics'} />
-                        <label htmlFor="category3">Electronics</label>
-                    </div>
-                    <div className="p-field-radiobutton p-col-6">
-                        <RadioButton inputId="category4" name="category" value="Fitness" onChange={onCategoryChange} checked={project.category === 'Fitness'} />
-                        <label htmlFor="category4">Fitness</label>
-                    </div>
-                </div>
-            </div>
 
-            <div className="p-formgrid p-grid">
-                <div className="p-field p-col">
-                    <label htmlFor="price">Price</label>
-                    <InputNumber id="price" value={project.price} onValueChange={(e) => onInputNumberChange(e, 'price')} mode="currency" currency="USD" locale="en-US" />
+                    <div className="p-field p-grid">
+                        <label htmlFor="projectname" className="p-col-12 p-md-3">Project Name</label>
+                        <div className="p-col-6 p-md-9">
+                            <InputText id="firstname4" type="text" value={project.name} onChange={(e) => onInputChange(e, 'name')} required autoFocu />
+                        </div>
+                    </div>
+
+                    <div className="p-field p-grid">
+                        <label htmlFor="description" className="p-col-12 p-md-3">Description</label>
+                        <div className="p-col-12 p-md-9 ">
+                            <InputTextarea id="description" value={project.description} onChange={(e) => onInputChange(e, 'description')} required type="text" required rows={5}/>
+                        </div>
+                    </div>
+                    <div className="p-field p-grid">
+                        <label htmlFor="dateEnd" className="p-col-12 p-md-3">Date End</label>
+                        <div className="p-col-12 p-md-9 ">
+                            <Calendar id="dateEnd" value={project.dateEnd} onChange={(e) => onDateChange(e.value, 'dateEnd')} />
+                        </div>
+                    </div>
+
+
+                    <div className="p-field p-grid">
+                        <label htmlFor="estimateDateEnd" className="p-col-4 p-md-3">Estimate Date End</label>
+                        <div className="p-col-8 p-md-9 ">
+                            <Calendar id="estimateDateEnd" value={project.estimateDateEnd} onChange={(e) => onDateChange(e.value, 'estimateDateEnd')} />
+                        </div>
+                    </div>
+
+
+                    <div className="p-field p-grid">
+                        <label htmlFor="estimatePrice" className="p-col-4 p-md-3">Estimate Price</label>
+                        <div className="p-col-8 p-md-9 ">
+                            <InputText id="estimatePrice" type="text" value={project.estimatePrice} onChange={(e) => onInputChange(e, 'estimatePrice')} />
+                        </div>
+                    </div>
+                    
+                    <div className="p-field p-grid">
+                        <label htmlFor="actualPrice" className="p-col-4 p-md-3">Actual Price</label>
+                        <div className="p-col-8 p-md-9 ">
+                            <InputText id="actualPrice" type="text" value={project.actualPrice} onChange={(e) => onInputChange(e, 'actualPrice')} />
+
+                        </div>
+                    </div>
+
                 </div>
-                <div className="p-field p-col">
-                    <label htmlFor="quantity">Quantity</label>
-                    <InputNumber id="quantity" value={project.quantity} onValueChange={(e) => onInputNumberChange(e, 'quantity')} integeronly />
-                </div>
-            </div>
+
+
+            </main>
+            <footer>
+                <Button label="Save" className="p-button-rounded" onClick={doSave}></Button>
+                <Button label="Cancel" className="p-button-rounded p-button-secondary" onClick={() => {
+                    doClose()
+                }}></Button>
+            </footer>
         </React.Fragment>
     )
 }

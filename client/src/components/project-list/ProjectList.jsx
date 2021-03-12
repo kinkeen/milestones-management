@@ -9,6 +9,9 @@ import { Button } from 'primereact/button';
 import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { Sidebar } from 'primereact/sidebar';
+
+import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 
 import { confirmDialog } from 'primereact/confirmdialog'; // To use confirmDialog method
 
@@ -18,6 +21,7 @@ import ProjectService from "../../services/ProjectService";
 import ProjectForm from '../project-form/ProjectForm'
 
 import conf from '../../helpers/Configuration';
+
 
 const ProjectList = () => {
   let emptyProject = {
@@ -35,6 +39,7 @@ const ProjectList = () => {
   };
 
   const [projects, setProjects] = useState(null);
+  const [visibleRight, setVisibleRight] = useState(false);
   const [projectDialog, setProjectDialog] = useState(false);
 
   const [deleteProjectDialog, setDeleteProjectDialog] = useState(false);
@@ -87,7 +92,9 @@ const ProjectList = () => {
   const openNew = () => {
     setProject(emptyProject);
     setSubmitted(false);
-    setProjectDialog(true);
+    // setProjectDialog(true);
+
+    setVisibleRight(true);
   }
 
   const hideDialog = () => {
@@ -104,6 +111,7 @@ const ProjectList = () => {
   }
 
   const saveProject = () => {
+
     setSubmitted(true);
 
     if (project.name.trim()) {
@@ -173,8 +181,8 @@ const ProjectList = () => {
   const leftToolbarTemplate = () => {
     return (
       <React.Fragment>
-        <Button label="New" icon="pi pi-plus" className="p-button-success p-mr-2" onClick={openNew} />
-        <Button label="Delete" icon="pi pi-trash" className="p-button-danger" onClick={confirm} disabled={!selectedProjects || !selectedProjects.length} />
+         <Button label="New" icon="pi pi-plus" className="p-button-raised p-button-rounded" onClick={openNew} />
+        {/* <Button label="Delete" icon="pi pi-trash" className="p-button-danger" onClick={confirm} disabled={!selectedProjects || !selectedProjects.length} /> */}
       </React.Fragment>
     )
   }
@@ -244,17 +252,77 @@ const ProjectList = () => {
     </React.Fragment>
   );
 
+  const doEdit = (rowData) => {
+    setProject(rowData)
+    setVisibleRight(true)
+
+  }
+
+  const doDelete = (event) => {
+    confirmPopup({
+      target: event.currentTarget,
+      message: 'Do you want to delete this record?',
+      icon: 'pi pi-info-circle',
+      acceptClassName: 'p-button-danger',
+      accept,
+      reject
+  }) ;
+
+
+  /*  service.post(project)
+    if (saveHandler instanceof Function) {
+        saveHandler(project)
+    }
+    else {
+        // PUT HERE SAVE PROJECT 
+    }*/
+
+    if (accept){
+      let _projects = projects.filter(val => val.id !== project.id);
+      setProject(_projects);
+      //setProject(rowData)
+      service.post('/delete:id', _projects);  
+    }
+
+    if (reject){
+      
+      
+    }
+
+  }
+
+
+  const accept = () => {
+    toast.current.show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+
+     setProject(emptyProject);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Project Deleted', life: 3000 });
+
+  };
+
+  const reject = () => {
+    toast.current.show({ severity: 'info', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+  };
+
+
+
   const actionBodyTemplate = (rowData) => {
     return (
-      <span>
-        <Button type="button" icon="pi pi-trash" className="p-button-secondary"></Button>
+      <span className="actions-column">
+
+        <Button type="button" icon="pi pi-trash" className=" p-button-outlined p-button-secondary" onClick={doDelete}></Button>
+        
+        <Button type="button" icon="pi pi-pencil" className=" p-button-outlined p-button-secondary" onClick={() => {
+          doEdit(rowData);
+        }}></Button>
+
         <Link to={`/projects/${rowData.id}`} >
-          <Button type="button" icon="pi pi-external-link" className="p-button-secondary"></Button>
+          <Button type="button" icon="pi pi-external-link" className=" p-button-outlined p-button-secondary"></Button>
         </Link>
       </span>
     );
   }
-  
+
   return (
     <div className="datatable-crud-demo">
       <Toast ref={toast} />
@@ -271,22 +339,27 @@ const ProjectList = () => {
           {/* <Column field="id" header="id" d></Column>
           <Column field="ownerId" header="ownerId" body={ownerIdBodyTemplate} sortable></Column> */}
           {/* <Column header="Image" body={imageBodyTemplate}></Column> */}
-          <Column field="name" header="name" body={nameBodyTemplate} sortable></Column>
-          <Column field="description" header="description" body={descriptionBodyTemplate} sortable></Column>
-          <Column field="dateStart" header="dateStart" body={dateStartBodyTemplate} sortable></Column>
-          <Column field="dateEnd" header="dateEnd" body={dateEndBodyTemplate} sortable></Column>
-          <Column field="estimatePrice" header="estimatePrice" body={estimatePriceBodyTemplate} sortable></Column>
-          <Column field="actualPrice" header="actualPrice" body={actualPricePriceBodyTemplate} sortable></Column>
-          <Column field="milestonese" header="milestonese" body={milestoneseBodyTemplate} sortable></Column>
+          <Column field="name" header="Name" body={nameBodyTemplate} sortable></Column>
+          <Column field="description" header="Description" body={descriptionBodyTemplate} sortable></Column>
+          <Column field="dateStart" header="Date Start" body={dateStartBodyTemplate} sortable></Column>
+          <Column field="dateEnd" header="Date End" body={dateEndBodyTemplate} sortable></Column>
+          <Column field="estimatePrice" header="Estimate Price" body={estimatePriceBodyTemplate} sortable></Column>
+          <Column field="actualPrice" header="Actual Price" body={actualPricePriceBodyTemplate} sortable></Column>
 
-
-          <Column body={actionBodyTemplate} headerStyle={{ width: '8em', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} />
+          <Column body={actionBodyTemplate} headerStyle={{ width: '10em', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} />
         </DataTable>
       </div>
+
+
+
+      <Sidebar visible={visibleRight} position="right" showCloseIcon={false} style={{ 'width': '50vw' }} baseZIndex={1000000} onHide={() => setVisibleRight(false)}>
+        <ProjectForm project={project} closeHandler={setVisibleRight} />
+      </Sidebar>
 
       <Dialog visible={projectDialog} style={{ width: '450px' }} header="Project Details" modal className="p-fluid" footer={projectDialogFooter} onHide={hideDialog}>
         <ProjectForm project={project} />
       </Dialog>
+
 
       <Dialog visible={deleteProjectDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteProjectDialogFooter} onHide={hideDeleteProjectDialog}>
         <div className="confirmation-content">

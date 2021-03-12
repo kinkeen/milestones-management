@@ -26,7 +26,7 @@ function MainPage() {
     if (isLogged) {
       setisAutheticated(true);
     }
-    
+
     if (isAutheticated) {
       // REDIRECT TO ADMIN
     }
@@ -49,14 +49,16 @@ function MainPage() {
 
         <Switch>
           <Route exact path="/">
-            <Redirect to="/login" />
-          </Route>
-          <Route path='/login'>
-            {!isAutheticated ? <LoginPage login={login} /> : <Redirect to="/admin" />}
-          </Route>
-          <Route path='/admin'>
             {isAutheticated ? <AdminPage logout={logout} /> : <Redirect to="/login" />}
           </Route>
+          <Route exact path='/login'>
+            {!isAutheticated ? <LoginPage login={login} /> : <Redirect to="/" />}
+          </Route>
+          {/* <Route exact path='/admin'>
+            {isAutheticated ? <AdminPage logout={logout} /> : <Redirect to="/login" />}
+          </Route> */}
+
+
 
           {/* <GuardedRoute exact path='/projects' component={AdminPage} auth={isAutheticated} />
           <GuardedRoute exact path='/projects/:id' component={AdminPage} auth={isAutheticated} />
