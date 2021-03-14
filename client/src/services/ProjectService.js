@@ -11,14 +11,18 @@ export default class ProjectService {
     }
 
     get(id) {
-        console.log('SERVICE: ', id)
         return axios.get(`${this.url}/${id}`).then(res => res.data);
     }
-    // put()
-    post(project) {
-        axios.post(`${this.url}`, project);
+
+    put(id, project) {
+        return axios.put(`${this.url}/${id}`, project);
     }
-    delete(ids) {
-        // IMPLENMNT PROJECT DELETION HERE
+
+    post(project) {
+        return axios.post(`${this.url}`, project);
+    }
+
+    delete(id) {
+        return axios.delete(`${this.url}/${id}`);
     }
 }

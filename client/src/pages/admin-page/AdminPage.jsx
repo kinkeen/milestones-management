@@ -61,7 +61,7 @@ const AdminPage = ({ logout }) => {
  return (
     <div>
       <Toolbar left={leftContents} right={rightContents} />
-      <Router>
+      {/* <Router> */}
         <Sidebar visible={visibleLeft} baseZIndex={1000000} onHide={() => setVisibleLeft(false)} showCloseIcon={false}> 
           <div className="p-tieredmenu p-component">
             <ul role="menubar" aria-orientation="horizontal">
@@ -106,8 +106,7 @@ const AdminPage = ({ logout }) => {
           </div>
 
         </Sidebar>
-        <Switch>
-
+        {/* <Switch>
           <Route exact path='/projects'>
             <ProjectList />
           </Route>
@@ -120,8 +119,8 @@ const AdminPage = ({ logout }) => {
             <MilestoneDetails />
           </Route>
           
-        </Switch>
-      </Router>
+        </Switch> 
+      </Router>*/}
     </div>
   );
 };

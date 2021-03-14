@@ -7,6 +7,11 @@ import GuardedRoute from '../../helpers/GuardedRoute'
 import LoginPage from '../login-page/LoginPage';
 import AdminPage from '../admin-page/AdminPage';
 
+import ProjectList from '../../components/project-list/ProjectList';
+import ProjectDetails from '../../components/project-details/ProjectDetails';
+import MilestoneDetails from '../../components/milestone-details/MilestoneDetails'
+
+
 function MainPage() {
   const [isAutheticated, setisAutheticated] = useState(false);
 
@@ -38,27 +43,32 @@ function MainPage() {
   return (
     <div>
       <Router>
-        {/* <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/admin">Admin</Link>
-          </li>
-        </ul> */}
-
         <Switch>
-          <Route exact path="/">
-            {isAutheticated ? <AdminPage logout={logout} /> : <Redirect to="/login" />}
-          </Route>
-          <Route exact path='/login'>
-            {!isAutheticated ? <LoginPage login={login} /> : <Redirect to="/" />}
-          </Route>
+            <Route exact path="/">
+                {isAutheticated ? <AdminPage logout={logout} /> : <Redirect to="/login" />}
+            </Route>
+
+            <Route exact path='/login'>
+              {!isAutheticated ? <LoginPage login={login} /> : <Redirect to="/" />}
+            </Route>
+
+            <Route exact path='/projects'><ProjectList /></Route>
+
+            <Route path='/projects/:id'><ProjectDetails /></Route>
+
+            <Route path='/milestone/:id'><MilestoneDetails /></Route>
+
+
+            {/* <Route exact path='/projects'  component={ProjectList}/>
+
+            <Route path='/projects/:id'  component={ProjectDetails}/>
+
+            <Route path='/milestone/:id'  component={MilestoneDetails}/> */}
+
+
           {/* <Route exact path='/admin'>
             {isAutheticated ? <AdminPage logout={logout} /> : <Redirect to="/login" />}
           </Route> */}
-
-
 
           {/* <GuardedRoute exact path='/projects' component={AdminPage} auth={isAutheticated} />
           <GuardedRoute exact path='/projects/:id' component={AdminPage} auth={isAutheticated} />

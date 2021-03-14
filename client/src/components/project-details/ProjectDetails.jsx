@@ -10,6 +10,7 @@ import { Card } from "primereact/card";
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
+import moment from 'moment'
 
 import './ProjectDetails.scss';
 
@@ -17,7 +18,20 @@ import ProjectService from "../../services/ProjectService";
 import MilestoneItem from '../milestone-item/MilestoneItem'
 
 const ProjectDetails = () => {
-  const [project, setProject] = useState({});
+  const [project, setProject] = useState(
+    {
+      id: '',
+      ownerId: '',
+      name: '',
+      description: '',
+      dateStart: '',
+      dateEnd: '',
+      estimateDateEnd: 0,
+      estimatePrice: 0,
+      actualPrice: 0,
+      milestones: [],
+      users: []
+    });
   const [loading, setLoading] = useState(false);
   let { id } = useParams();
 
@@ -76,8 +90,13 @@ const ProjectDetails = () => {
     );
   };
 
+  const string2Date = (date) => {
+    console.log(date, moment.utc(date).toDate())
+    return moment.utc(date).toDate();
+}
+
   return (
-    <div> <Link to='/projects'>Back To List</Link>
+    <div> {/*<Link to='/projects'>Back To List</Link>*/}
 
       <Card style={{'width': '1200px', 'margin': '30px, auto'}}>
        
@@ -108,12 +127,12 @@ const ProjectDetails = () => {
           <div className="p-field p-grid">
               <label htmlFor="dateEnd" className="p-col-12 p-md-2">Date End</label>
               <div className="p-col-12 p-md-4 ">
-                  <Calendar id="dateEnd" value={project.dateEnd} disabled/>
+                  <Calendar id="dateEnd" value={string2Date(project.dateEnd)} disabled/>
               </div>
 
               <label htmlFor="estimateDateEnd" className="p-col-4 p-md-2">Estimate Date End</label>
               <div className="p-col-8 p-md-4">
-                  <Calendar id="estimateDateEnd" value={project.estimateDateEnd} disabled/>
+                  <Calendar id="estimateDateEnd" value={string2Date(project.estimateDateEnd)} disabled/>
               </div>
           </div>
 
