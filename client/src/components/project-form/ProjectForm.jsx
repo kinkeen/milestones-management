@@ -4,15 +4,15 @@ import { Button } from 'primereact/button';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
+import { Fieldset } from 'primereact/fieldset';
 import moment from 'moment'
 import 'primeflex/primeflex.css';
-
 import './ProjectForm.scss'
 import ProjectService from "../../services/ProjectService";
 
 const ProjectForm = (props) => {
     const [submitted, setSubmitted] = useState(false);
-    const [project, setProject] = useState(props.project);
+    const [project, setProject] = useState(props.project || {});
 
     const service = new ProjectService();
 
@@ -56,16 +56,8 @@ const ProjectForm = (props) => {
 
     const onDateChange = (val, name) => {
 
-        // debugger
-        //change textInput
-        // const val = (e.target && e.target.value) || '';
-        //change numberInput
-        //const val = e.value || 0;
-
         let _project = { ...project };
         _project[name] = val;
-
-
         setProject(_project);
     }
 
@@ -84,8 +76,9 @@ const ProjectForm = (props) => {
 
     return (
         <React.Fragment>
-            <main>
-                <h3><b>Project:</b></h3>
+
+            <Fieldset legend="Project" >
+
                 <div className="p-fluid">
                     <div className="p-field p-grid">
                         <label htmlFor="id" className="p-col-12 p-md-3">ID</label>
@@ -137,15 +130,17 @@ const ProjectForm = (props) => {
                         </div>
                     </div>
                 </div>
-            </main>
-            <footer>
-                <Button label="Save" className="p-button-rounded" onClick={doSave}></Button>
-                <Button label="Cancel" className="p-button-rounded p-button-secondary" onClick={() => {
-                    doClose()
-                }}></Button>
-            </footer>
+                <footer>
+                    <Button label="Save" className="p-button-rounded" onClick={doSave}></Button>
+                    <Button label="Cancel" className="p-button-rounded p-button-secondary" onClick={() => {
+                        doClose()
+                    }}></Button>
+                </footer>
+            </Fieldset>
+
         </React.Fragment>
     )
-}
+
+ }
 
 export default ProjectForm;

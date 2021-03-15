@@ -1,18 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
+import { Toolbar } from 'primereact/toolbar';
+import { Menu } from 'primereact/menu';
+import { Sidebar } from 'primereact/sidebar';
+import { Fieldset } from 'primereact/fieldset';
 
 
 import GuardedRoute from '../../helpers/GuardedRoute'
-
 import LoginPage from '../login-page/LoginPage';
 import AdminPage from '../admin-page/AdminPage';
-
 import ProjectList from '../../components/project-list/ProjectList';
 import ProjectDetails from '../../components/project-details/ProjectDetails';
+import ProjectForm from '../../components/project-form/ProjectForm';
 import MilestoneDetails from '../../components/milestone-details/MilestoneDetails'
 
 
 function MainPage() {
+
+  const [visibleLeft, setVisibleLeft] = useState(false);
+  const [visibleRigth, setVisibleRigth] = useState(false);
+
   const [isAutheticated, setisAutheticated] = useState(false);
 
   function login() {
@@ -22,11 +29,14 @@ function MainPage() {
 
   function logout() {
     setisAutheticated(false);
+    //sessionStorage.setItem('isAutheticated', false)
     sessionStorage.removeItem('isAutheticated')
   }
 
   useEffect(() => {
     let isLogged = sessionStorage.getItem('isAutheticated');
+
+    console.log(isLogged);
 
     if (isLogged) {
       setisAutheticated(true);
@@ -40,43 +50,113 @@ function MainPage() {
     }
   }, [isAutheticated])
 
+  const menu = useRef(null);
+
+  const userMenu = [
+    {
+      label: 'Options',
+      items: [
+        {
+          label: 'Profile',
+          icon: 'pi pi-user',
+          command: () => {
+
+          }
+        },
+        {
+          label: 'Logout',
+          icon: 'pi pi-sign-out',
+          command: () => {
+            logout()
+          }
+        }
+      ]
+    }
+  ];
+
+  const leftContents = (
+    <React.Fragment>
+      <i className="pi pi-bars p-toolbar-separator p-mr-2" onClick={() => setVisibleLeft(true)} role="link" />
+    </React.Fragment>
+  );
+
+  const rightContents = (
+    <React.Fragment>
+      <Menu model={userMenu} popup ref={menu} id="popup_menu" />
+      <i className="pi pi-user p-toolbar-separator p-mr-2" onClick={(event) => menu.current.toggle(event)} aria-controls="popup_menu" aria-haspopup role="link" />
+    </React.Fragment>
+  );
   return (
+
     <div>
       <Router>
-        <Switch>
-            <Route exact path="/">
-                {isAutheticated ? <AdminPage logout={logout} /> : <Redirect to="/login" />}
-            </Route>
+        {isAutheticated && 
+          <div>
+            <Toolbar left={leftContents} right={rightContents} />
+            <Sidebar visible={visibleLeft} baseZIndex={1000000} onHide={() => setVisibleLeft(false)} showCloseIcon={false}>
+              <div className="p-tieredmenu p-component">
+                <Fieldset legend="Project" >
+                  <div>
+                    <Link to='/projects'>
+                      <span className="p-menuitem-icon pi pi-fw pi-file"></span>
+                      <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>Projects </span>
+                    </Link>
+                  </div>  
+                  <div>
+                    <Link to='/projects/new'>
+                      <span className="p-menuitem-icon pi pi-fw pi-file"></span>
+                      <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)} >New Project</span>
+                    </Link>
+                  </div>                    
+                </Fieldset>
 
+                <Fieldset legend="user" >
+                  <div>                  
+                    <Link to="/users">
+                      <span className="p-menuitem-icon pi pi-fw pi-user"></span>
+                      <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>Users</span>
+                    </Link>
+                  </div>                    
+                  <div>                 
+                    <Link to="/users/new">
+                      <span className="p-menuitem-icon pi pi-fw pi-user"></span>
+                      <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>New Users</span>
+                    </Link>
+                  </div>                    
+                </Fieldset>
+              </div>
+            </Sidebar>
+         </div>
+        }
+
+        <div>
+          {!isAutheticated ? <Redirect to="/login" /> : null}
+
+          <Switch>
+            <Route exact path="/">
+              {isAutheticated ? <AdminPage logout={logout} /> : <Redirect to="/login" />}
+            </Route>
             <Route exact path='/login'>
               {!isAutheticated ? <LoginPage login={login} /> : <Redirect to="/" />}
             </Route>
-
-            <Route exact path='/projects'><ProjectList /></Route>
-
-            <Route path='/projects/:id'><ProjectDetails /></Route>
+            <Route path='/projects/new'>
+              <div  >
+                <ProjectForm />
+              </div>
+            </Route>
+            <Route path='/projects'><ProjectList /></Route>
 
             <Route path='/milestone/:id'><MilestoneDetails /></Route>
 
-
-            {/* <Route exact path='/projects'  component={ProjectList}/>
-
-            <Route path='/projects/:id'  component={ProjectDetails}/>
-
-            <Route path='/milestone/:id'  component={MilestoneDetails}/> */}
-
-
-          {/* <Route exact path='/admin'>
-            {isAutheticated ? <AdminPage logout={logout} /> : <Redirect to="/login" />}
-          </Route> */}
-
-          {/* <GuardedRoute exact path='/projects' component={AdminPage} auth={isAutheticated} />
+            {/* <GuardedRoute exact path='/projects' component={AdminPage} auth={isAutheticated} />
           <GuardedRoute exact path='/projects/:id' component={AdminPage} auth={isAutheticated} />
 
           <GuardedRoute path='/milestone/:id' component={AdminPage} auth={isAutheticated} /> */}
 
-          {/* <GuardedRoute path='/admin' component={AdminPage} auth={isAutheticated} /> */}
-        </Switch>
+            {/* <GuardedRoute path='/admin' component={AdminPage} auth={isAutheticated} /> */}
+
+          </Switch>
+        </div>
 
       </Router>
     </div>

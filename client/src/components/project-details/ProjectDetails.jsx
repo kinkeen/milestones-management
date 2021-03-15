@@ -18,7 +18,8 @@ import ProjectService from "../../services/ProjectService";
 import MilestoneItem from '../milestone-item/MilestoneItem'
 
 const ProjectDetails = () => {
-  const [project, setProject] = useState(
+
+const [project, setProject] = useState(
     {
       id: '',
       ownerId: '',
@@ -32,6 +33,7 @@ const ProjectDetails = () => {
       milestones: [],
       users: []
     });
+
   const [loading, setLoading] = useState(false);
   let { id } = useParams();
 
@@ -98,7 +100,7 @@ const ProjectDetails = () => {
   return (
     <div> {/*<Link to='/projects'>Back To List</Link>*/}
 
-      <Card style={{'width': '1200px', 'margin': '30px, auto'}}>
+    <Card style={{'width': '1200px', 'margin': '30px, auto'}}>
        
 
       <div className="p-fluid">
