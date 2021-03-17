@@ -1,0 +1,39 @@
+{
+
+"data": [
+
+{
+    "id" : "1",
+    "userType": [],
+    "firstName": "Alex",
+    "lastName" : "Alexise",
+    "phone" : "6131116666",
+    "email" : "alex@gmail.com",
+    "password": "1234test",
+    "country" : "Canada",
+    "street": "Cramer",
+    "city": "Ottawa",
+    "province": "ON",
+    "postalcode": "H5Y8E6"
+},
+{
+    "id" : "2",
+    "userType": [],
+    "firstName": "Sara",
+    "lastName" : "Dimond",
+    "phone" : "6131116666",
+    "email" : "sara@gmail.com",
+    "password": "saratest",
+    "country" : "Canada",
+    "street": "Lessard",
+    "city": "Ottawa",
+    "province": "ON",
+    "postalcode": "H5S8E6"
+}
+
+
+
+]
+
+
+}
