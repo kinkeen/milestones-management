@@ -49,6 +49,7 @@ Open http://localhost:3000 to view it in the browser.
 + react-scripts": "4.0.3",
 + react-transition-group": "^4.4.1",
 + sass": "^1.32.8",
++ react-signature-canvas
 
 ## SERVER SIDE PACKAGE INSTALLATIONS:
 + body-parser": "^1.19.0",

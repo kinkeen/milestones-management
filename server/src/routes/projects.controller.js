@@ -47,6 +47,7 @@ router.post('/', async (req, res, next) => {
 
 
 router.put('/:id', async (req, res, next) => {
+	console.log(req.params.id, req.body)
 	try {
 		const incident = await ProjectService.update(req.params.id, req.body);
 

@@ -1,16 +1,21 @@
-class ProjectModel {
+const {
+    v1: uuidv1,
+    v4: uuidv4,
+} = require('uuid');
 
-	constructor(id, name, description, ownerId, startDay, estimateDateEnd, actuallDateEnd, estimatePrice, actuallPrice) {
-		this.id = Math.random(10000);
-		this.ownerId = ownerId;
-		this.name = name;
-		this.description = description;
-		this.dateStart = dateStart;
-		this.dateEnd = dateEnd;
-		this.estimateDateEnd = estimateDateEnd;
-		this.estimatePrice = estimatePrice;
-		this.milestones = milestones;
-		this.users = users;
+class ProjectModel {
+	constructor(obj) {
+		this.id = uuidv4();
+		this.ownerId = uuidv4();
+		this.name = obj.name;
+		this.description = obj.description;
+		this.dateStart = obj.dateStart;
+		this.dateEnd = obj.dateEnd;
+		this.estimateDateEnd = obj.estimateDateEnd;
+		this.estimatePrice = obj.estimatePrice;
+		this.actuallPrice = obj.actuallPrice;
+		this.milestones = [];
+		this.users = [];
 	}
 }
 

@@ -1,5 +1,8 @@
+
 import React, { useRef, useState } from "react";
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
+import React, { useState } from "react";
+import { BrowserRouter as Router, Switch, Route, Link, Redirect, useRouteMatch } from "react-router-dom";
 
 import { Toolbar } from 'primereact/toolbar';
 import { Menu } from 'primereact/menu';
@@ -15,6 +18,7 @@ import UserDetails from "../../components/user-details/UserDetails";
 
 const AdminPage = ({ logout }) => {
   const [visibleLeft, setVisibleLeft] = useState(false);
+  
   const menu = useRef(null);
   const userMenu = [
     {
@@ -100,6 +104,22 @@ const AdminPage = ({ logout }) => {
           </Route>
         </Switch>
       </Router>
+
+  const [visibleRigth, setVisibleRigth] = useState(false);
+
+  let { path, url } = useRouteMatch();
+
+  return (
+    <div>
+      <Switch>
+        <Route exact path={`${path}/projects`}>
+          <ProjectList />
+        </Route>
+        <Route path='/milestone/:id'>
+          <MilestoneDetails />
+        </Route>
+
+      </Switch>
     </div>
   );
 };

@@ -1,9 +1,10 @@
 
 
 .x-timeline {
+    margin-top: 20px;
     .p-card {overflow: hidden;
         &.x-collapsed {
-            height: 75px;
+            height: 100px;
         }
 
         &.x-expanded {

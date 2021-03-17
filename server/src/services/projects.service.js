@@ -12,6 +12,38 @@ class ProjectService {
 	static get(id) {
 		const project = projects.data.find(project => project.id == id)
 
+		project.milestones = [
+			{
+			  status: "Ordered",
+			  date: "15/10/2020 10:30",
+			  icon: "pi pi-shopping-cart",
+			  color: "#9C27B0",
+			  image: "game-controller.jpg",
+			  number: 1
+			},
+			{
+			  status: "Processing",
+			  date: "15/10/2020 14:00",
+			  icon: "pi pi-cog",
+			  color: "#673AB7",
+			  number: 2
+			},
+			{
+			  status: "Shipped",
+			  date: "15/10/2020 16:15",
+			  icon: "pi pi-shopping-cart",
+			  color: "#FF9800",
+			  number: 3
+			},
+			{
+			  status: "Delivered",
+			  date: "16/10/2020 10:00",
+			  icon: "pi pi-check",
+			  color: "#607D8B",
+			  number: 4
+			},
+		  ];
+
 		if (project != null) {
 			return project;
 		}
@@ -21,10 +53,7 @@ class ProjectService {
 	}
 
 	static create(data) {
-
-		let { name, status, priority, country } = data;
-
-		let project = new IncidentModel(name, status, priority, country);
+		let project = new ProjectModel(data);
 
 		projects.data.push(project);
 
@@ -32,59 +61,12 @@ class ProjectService {
 	}
 
 	static update(id, data) {
-		const project = projects.data.find(project => project.id == id);
+		const project = projects.data.find( item => item.id == id);
 
-		if (project.audits === undefined) {
-			project.audits = [];
-		}
-
-		if (data['status'] != project['status']) {
-			project.audits.push({
-				title: `project ${data['status']}`,
-				message: 'project status from {1} to {2}',
-				property: 'status',
-				from: project['status'],
-				to: data['status'],
-				updated: new Date()
-			});
-
-			project['status'] = data['status'];
-		}
-
-		if (data['name'] != project['name']) {
-			project.audits.push({
-				title: `project ${data['name']}`,
-				message: 'project name from {1} to {2}',
-				property: 'name',
-				from: project['name'],
-				to: data['name'],
-				updated: new Date()
-			});
-			project['name'] = data['name'];
-		}
-
-		if (data['priority'] != project['priority']) {
-			project.audits.push({
-				title: `project ${data['priority']}`,
-				message: 'project priority from {1} to {2}',
-				property: 'priority',
-				from: project['priority'],
-				to: data['priority'],
-				updated: new Date()
-			});
-			project['priority'] = data['priority'];
-		}
-
-		if (data['country'] != project['country']) {
-			project.audits.push({
-				title: `project ${data['country']}`,
-				message: 'project country from {1} to {2}',
-				property: 'country',
-				from: project['country'],
-				to: data['country'],
-				updated: new Date()
-			});
-			project['country'] = data['country'];
+		for (let key in data){
+			if(key in project ) {
+				project[key] = data[key];
+			}
 		}
 
 		return project;
@@ -92,7 +74,8 @@ class ProjectService {
 
 	static delete(id) {
 		const idx = projects.data.findIndex(project => project.id == id);
-		delete projects.data[idx];
+
+		projects.data.splice(idx, 1);
 	}
 }
 
