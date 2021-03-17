@@ -1,16 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { Button } from 'primereact/button';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { InputText } from 'primereact/inputtext';
-import { Calendar } from 'primereact/calendar';
-import { Fieldset } from 'primereact/fieldset';
+import {
+    Button, 
+    Fieldset, 
+    InputText, 
+    InputTextarea, 
+    Calendar, 
+} from '../../helpers/ui.modue';
+
 import moment from 'moment'
 import 'primeflex/primeflex.css';
+
 import './ProjectForm.scss'
 import ProjectService from "../../services/ProjectService";
 
+
 const ProjectForm = (props) => {
+
     const [submitted, setSubmitted] = useState(false);
     const [project, setProject] = useState(props.project || {});
 
@@ -61,22 +67,15 @@ const ProjectForm = (props) => {
         setProject(_project);
     }
 
-    const onInputNumberChange = (e, name) => {
-        const val = e.value || 0;
-        let _project = { ...project };
-        _project[`${name}`] = val;
-
-        setProject(_project);
-    }
-
     const string2Date = (date) => {
         console.log(date, moment.utc(date).toDate())
         return moment.utc(date).toDate();
     }
 
     return (
-        <React.Fragment>
 
+
+        <React.Fragment>
             <Fieldset legend="Project" >
 
                 <div className="p-fluid">

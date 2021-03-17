@@ -1,9 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
-import { Toolbar } from 'primereact/toolbar';
-import { Menu } from 'primereact/menu';
-import { Sidebar } from 'primereact/sidebar';
-import { Fieldset } from 'primereact/fieldset';
+
+import {
+  Menu, 
+  Toolbar, 
+  Sidebar,
+  Divider
+} from '../../helpers/ui.modue';
 
 
 import GuardedRoute from '../../helpers/GuardedRoute'
@@ -90,43 +93,50 @@ function MainPage() {
 
     <div>
       <Router>
-        {isAutheticated && 
+        {isAutheticated &&
           <div>
             <Toolbar left={leftContents} right={rightContents} />
             <Sidebar visible={visibleLeft} baseZIndex={1000000} onHide={() => setVisibleLeft(false)} showCloseIcon={false}>
-              <div className="p-tieredmenu p-component">
-                <Fieldset legend="Project" >
-                  <div>
-                    <Link to='/projects'>
-                      <span className="p-menuitem-icon pi pi-fw pi-file"></span>
-                      <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>Projects </span>
-                    </Link>
-                  </div>  
-                  <div>
-                    <Link to='/projects/new'>
-                      <span className="p-menuitem-icon pi pi-fw pi-file"></span>
-                      <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)} >New Project</span>
-                    </Link>
-                  </div>                    
-                </Fieldset>
 
-                <Fieldset legend="user" >
-                  <div>                  
-                    <Link to="/users">
-                      <span className="p-menuitem-icon pi pi-fw pi-user"></span>
-                      <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>Users</span>
+
+              <div className="p-tieredmenu p-component">
+
+                <Divider align="left">
+                  <div className="p-d-inline-flex p-ai-center">
+                      <i className="p-menuitem-icon pi pi-fw pi-file"></i>
+                      <b>Projects</b>
+                  </div>  
+                </Divider>      
+                <div>
+                    <Link to='/projects'>
+                      <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>Projects List </span>
                     </Link>
-                  </div>                    
-                  <div>                 
+                </div>
+                <div>
+                    <Link to='/projects/new'>
+                    <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)} >New Project</span>
+                  </Link>
+                </div> 
+
+                <Divider align="left">
+                  <div className="p-d-inline-flex p-ai-center">
+                      <i className="pi pi-users p-mr-2"></i>
+                      <b>Users</b>
+                  </div>  
+                </Divider>      
+                  <div>                        
+                    <Link to="/users">
+                      <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>Users List</span>
+                    </Link>
+                  </div>
+                  <div>
                     <Link to="/users/new">
-                      <span className="p-menuitem-icon pi pi-fw pi-user"></span>
                       <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>New Users</span>
                     </Link>
-                  </div>                    
-                </Fieldset>
-              </div>
+                  </div>
+                  </div>                  
             </Sidebar>
-         </div>
+          </div>
         }
 
         <div>
@@ -136,17 +146,24 @@ function MainPage() {
             <Route exact path="/">
               {isAutheticated ? <AdminPage logout={logout} /> : <Redirect to="/login" />}
             </Route>
+
             <Route exact path='/login'>
               {!isAutheticated ? <LoginPage login={login} /> : <Redirect to="/" />}
             </Route>
+
             <Route path='/projects/new'>
               <div  >
                 <ProjectForm />
               </div>
             </Route>
-            <Route path='/projects'><ProjectList /></Route>
+            
+            <Route path='/projects'>
+              <ProjectList />
+            </Route>
 
-            <Route path='/milestone/:id'><MilestoneDetails /></Route>
+            <Route path='/milestone/:id'>
+              <MilestoneDetails />
+            </Route>
 
             {/* <GuardedRoute exact path='/projects' component={AdminPage} auth={isAutheticated} />
           <GuardedRoute exact path='/projects/:id' component={AdminPage} auth={isAutheticated} />

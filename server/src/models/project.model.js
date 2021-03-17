@@ -4,10 +4,7 @@ const {
 } = require('uuid');
 
 class ProjectModel {
-
-	// id, name, description, ownerId, startDay, estimateDateEnd, actuallDateEnd, estimatePrice, actuallPrice
 	constructor(obj) {
-
 		this.id = uuidv4();
 		this.ownerId = uuidv4();
 		this.name = obj.name;

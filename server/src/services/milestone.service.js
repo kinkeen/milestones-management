@@ -1,7 +1,6 @@
 const MilestoneModel = require("../models/milestone.model");
 
-
-const projects = require('../../data/seeds/milestons.json')
+const milestones = require('../../data/seeds/milestons.json')
 
 class MilestoneService {
 
