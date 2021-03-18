@@ -1,8 +1,25 @@
 html, body {
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 a {
     text-decoration: none;
+}
+
+#root {
+    overflow: auto;
+    height: 100vh;
+}
+
+.p-sidebar-right {
+    width: 50vw;
+    z-index: 1001004;
+    height: 100vh;
+    overflow: auto;
+}
+
+.p-menuitem-text {
+    margin-left:80px
 }

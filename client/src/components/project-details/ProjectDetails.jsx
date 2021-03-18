@@ -16,7 +16,6 @@ import {
 } from '../../helpers/ui.modue';
 
 import moment from 'moment';
-
 import './ProjectDetails.scss';
 import ProjectService from "../../services/ProjectService";
 import MilestoneItem from '../milestone-item/MilestoneItem';
@@ -73,7 +72,9 @@ const ProjectDetails = () => {
   }
 
   const onNewMilestone = () => {
-    setMilestone({});
+    setMilestone({
+      projectId: project.id
+    });
     setVisibleRight(true);
   }
 

@@ -1,6 +1,6 @@
 const ProjectModel = require("../models/project.model");
 
-const projects = require('../../data/seeds/projects.json')
+const projects = require('../../db/seeds/projects.json')
 
 /* static project service class */
 class ProjectService {

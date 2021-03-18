@@ -9,6 +9,8 @@ import { Sidebar } from 'primereact/sidebar';
 import { Fieldset } from 'primereact/fieldset';
 import { Divider } from 'primereact/divider';
 import { Menu } from 'primereact/menu';
+import { FileUpload } from 'primereact/fileupload';
+import { Dialog } from 'primereact/dialog'
 
 export {
     Timeline,
@@ -21,5 +23,7 @@ export {
     Sidebar, 
     Fieldset,
     Divider, 
-    Menu
+    Menu,
+    FileUpload,
+    Dialog
 }

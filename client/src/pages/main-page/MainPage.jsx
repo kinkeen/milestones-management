@@ -112,12 +112,33 @@ function MainPage() {
                       <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>Projects List </span>
                     </Link>
                 </div>
+
                 <div>
                     <Link to='/projects/new'>
                     <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)} >New Project</span>
                   </Link>
                 </div> 
 
+
+                <Divider align="left">
+                  <div className="p-d-inline-flex p-ai-center">
+                      <i className="p-menuitem-icon pi pi-fw pi-file"></i>
+                      <b>Milestones</b>
+                  </div>  
+                </Divider>      
+                <div>
+                    <Link to='/projects'>
+                      <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>Milestones List </span>
+                    </Link>
+                </div>
+
+                <div>
+                    <Link to='/projects/new'>
+                    <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)} >New Milestones</span>
+                  </Link>
+                </div> 
+
+                               
                 <Divider align="left">
                   <div className="p-d-inline-flex p-ai-center">
                       <i className="pi pi-users p-mr-2"></i>
@@ -182,35 +203,6 @@ function MainPage() {
 
 
 export default MainPage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
