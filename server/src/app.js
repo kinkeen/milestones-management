@@ -3,9 +3,12 @@ const path = require('path');
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const cookieSession = require('cookie-session');
+
 
 const projects = require('./routes/projects.controller');
 const milestones = require('./routes/milestones.controller');
+const users = require('./routes/users.controller');
 
 let reporter = function (type, ...rest)
 {
@@ -33,6 +36,12 @@ process.on('unhandledRejection', function (reason, promise)
 
 const app = express();
 
+app.use(cookieSession({
+    name: 'session',
+    keys: ['key1']
+  }));
+
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -46,5 +55,6 @@ app.use(function(req, res, next) {
 
 app.use('/api/projects', projects);
 app.use('/api/milestones', milestones)
+app.use('/api/users', users)
 
 module.exports = app;
