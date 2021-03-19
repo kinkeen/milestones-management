@@ -21,7 +21,6 @@ import MilestoneDetails from '../../components/milestone-details/MilestoneDetail
 function MainPage() {
 
   const [visibleLeft, setVisibleLeft] = useState(false);
-  const [visibleRigth, setVisibleRigth] = useState(false);
 
   const [isAutheticated, setisAutheticated] = useState(false);
 

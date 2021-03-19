@@ -11,6 +11,7 @@ import { Divider } from 'primereact/divider';
 import { Menu } from 'primereact/menu';
 import { FileUpload } from 'primereact/fileupload';
 import { Dialog } from 'primereact/dialog'
+import { Tooltip } from 'primereact/tooltip'
 
 export {
     Timeline,
@@ -25,5 +26,6 @@ export {
     Divider, 
     Menu,
     FileUpload,
-    Dialog
+    Dialog,
+    Tooltip
 }

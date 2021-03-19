@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-
-import SignaturePad from 'react-signature-canvas'
-
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import SignaturePad from 'react-signature-canvas';
 import {
     Button,
     Fieldset,
@@ -9,26 +7,27 @@ import {
     InputTextarea,
     Calendar,
     FileUpload,
-    Dialog
+    Dialog,
+    Tooltip
 } from '../../helpers/ui.modue';
-
-import moment from 'moment'
-import StatusType from '../../core/enums/StatusType'
-
-import './MilestoneForm.scss'
+import moment from 'moment';
+import StatusType from '../../core/enums/StatusType';
+import './MilestoneForm.scss';
 import Milestone from '../../core/models/milestone.model';
+import UserContext from '../../contexts/user-context';
 
 const MilestoneForm = (props) => {
     const [mileston, setMileston] = useState(new Milestone(props.milestone));
     const [displayReason, setDisplayReason] = useState(false);
     const [displaySignature, setDisplaySignature] = useState(false);
+    const user = useContext(UserContext);
 
     const [reason, setReason] = useState('');
-    const [status, setStatus] = useState(null)
+    // const [status, setStatus] = useState(null)
     const signatureRef = useRef();
 
     useEffect(() => {
-        console.log(mileston)
+        console.log(user, mileston)
     }, [])
 
     const onInputChange = (e, name) => {
@@ -105,38 +104,43 @@ const MilestoneForm = (props) => {
 
     }
 
+    const close = () => {
+        props.closeHandler();
+    }
+
     const renderStatusButtons = (status) => {
+        let right = null;
         switch (status) {
             case StatusType.INIT:
-                return (
+                right = (
                     <React.Fragment>
                         <Button label="SAVE" className="p-button-raised p-button-text" onClick={init}></Button>
                         <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
                     </React.Fragment>
                 )
             case StatusType.WAITING_TO_ACCEPT:
-                return (
+                right = (
                     <React.Fragment>
                         <Button label="REJECT" className="p-button-raised p-button-text" onClick={reject}></Button>
                         <Button label="ACCEPT" className="p-button-raised p-button-text" onClick={accept}></Button>
                     </React.Fragment>
                 )
             case StatusType.ASK_MODIFICATION:
-                return (
+                right = (
                     <React.Fragment>
                         <Button label="REPLAY" className="p-button-raised p-button-text" onClick={save}></Button>
                         <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
                     </React.Fragment>
                 )
             case StatusType.ACCEPTED:
-                return (
+                right = (
                     <React.Fragment>
                         <Button label="ACCEPT" className="p-button-raised p-button-text" onClick={accept}></Button>
                         <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
                     </React.Fragment>
                 )
             case StatusType.STARTED:
-                return (
+                right = (
                     <React.Fragment>
                         <Button label="START" className="p-button-raised p-button-text" onClick={save}></Button>
                         <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
@@ -144,7 +148,7 @@ const MilestoneForm = (props) => {
                 )
 
             case StatusType.IN_PROGRESS:
-                return (
+                right = (
                     <React.Fragment>
                         <Button label="Save" className="p-button-raised p-button-text" onClick={save}></Button>
                         <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
@@ -152,7 +156,7 @@ const MilestoneForm = (props) => {
                 )
 
             case StatusType.FINISHED:
-                return (
+                right = (
                     <React.Fragment>
                         <Button label="Save" className="p-button-raised p-button-text" onClick={save}></Button>
                         <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
@@ -160,7 +164,7 @@ const MilestoneForm = (props) => {
                 )
 
             case StatusType.REJECTED:
-                return (
+                right = (
                     <React.Fragment>
                         <Button label="Save" className="p-button-raised p-button-text" onClick={save}></Button>
                         <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
@@ -168,7 +172,7 @@ const MilestoneForm = (props) => {
                 )
 
             case StatusType.CONFIRMED:
-                return (
+                right = (
                     <React.Fragment>
                         <Button label="Save" className="p-button-raised p-button-text" onClick={save}></Button>
                         <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
@@ -176,7 +180,7 @@ const MilestoneForm = (props) => {
                 )
 
             case StatusType.END:
-                return (
+                right = (
                     <React.Fragment>
                         <Button label="Save" className="p-button-raised p-button-text" onClick={save}></Button>
                         <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
@@ -184,20 +188,33 @@ const MilestoneForm = (props) => {
                 )
 
             case StatusType.CANCELLED:
-                return (
+                right = (
                     <React.Fragment>
                         <Button label="Save" className="p-button-raised p-button-text" onClick={save}></Button>
                         <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
                     </React.Fragment>
                 )
             default:
-                return (
+                right = (
                     <React.Fragment>
                         <Button label="INIT" className="p-button-raised p-button-text" onClick={init}></Button>
                         <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
                     </React.Fragment>
                 )
         }
+
+        return (
+            <React.Fragment>
+                <div style={{ display: 'flex', 'justify-content': 'space-between' }}>
+                    <span>
+                        {right}
+                    </span>
+                    <span>
+                        <Button label="CLOSE" className="p-button-raised p-button-text" onClick={close}></Button>
+                    </span>
+                </div>
+            </React.Fragment>
+        )
     }
 
     const dialogFuncMap = {
@@ -227,7 +244,17 @@ const MilestoneForm = (props) => {
     }
 
     const clearSignature = () => {
-        signatureRef.clear()
+        signatureRef.current.clear()
+    }
+
+    const saveSignature = () => {
+        if (signatureRef.current.isEmpty()) {
+            alert('Please provide a signature then save')
+            return;
+        }
+
+
+        setDisplaySignature(false);
     }
     return (
 
@@ -305,23 +332,6 @@ const MilestoneForm = (props) => {
                 </footer>
             </Fieldset>
 
-            {/* <SignatureCanvas penColor='green'
-                canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }} /> */}
-
-
-
-            {/* 
-   
-        <SignaturePad canvasProps={{className: styles.signatureRef}}
-          ref={(ref) => { this.signatureRef = ref }} />
-      
-        <button className={styles.buttons} onClick={this.clear}>
-          Clear
-        </button>
-        <button className={styles.buttons} onClick={this.trim}>
-          Trim
-        </button> */}
-
             <Dialog header="Reason" visible={displayReason} style={{ width: '50vw' }} footer={renderFooter('displayReason')} onHide={() => onHide('displayReason')} baseZIndex={1000}>
                 <div className="p-field p-grid">
                     <div className="p-col-12 ">
@@ -333,25 +343,22 @@ const MilestoneForm = (props) => {
 
             <Dialog header="Signature" visible={displaySignature} style={{ width: '660px' }} footer={
                 (
-                    <Button label="SIGNED" icon="pi pi-check" onClick={() => onHide('displaySignature')} autoFocus />
+                    <Button label="SAVE" icon="pi pi-check" onClick={saveSignature} autoFocus />
                 )
-            } onHide={() => onHide('displayReason')} baseZIndex={1000}>
+            } onHide={() => setDisplaySignature(false)} baseZIndex={1000}>
                 <div className="p-field p-grid">
                     <div className="p-col-12 ">
-                        <div>
-                            <span>This action required your signature</span>
-                            <i className="pi pi-replay" onClick={clearSignature} ></i>
-                        </div>
-                        <SignaturePad canvasProps={{ width: 600, height: 200, className: 'x-signature-pad' }}
-                        
+                        <span>This action required your signature</span>
+                        <SignaturePad
+                            canvasProps={{ width: 600, height: 200, className: 'x-signature-pad' }}
                             ref={signatureRef}
                         />
+                        <i className="pi pi-undo x-tooltip" onClick={clearSignature} title="clear signature" tooltip="clear signature"></i>
                     </div>
                 </div>
             </Dialog>
 
-
-
+            <Tooltip target=".x-tooltip" />
         </React.Fragment>
     )
 }
