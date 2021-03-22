@@ -1,6 +1,6 @@
 CREATE TYPE StatusTypes AS ENUM ('init', 'waiting_to_accept', 'ask_modification', 'accepted', 'started', 'in_progress', 'finished', 'rejected', 'confirmed', 'end', 'cancelled');
 
-CREATE TABLE mileston (
+CREATE TABLE milestone (
 
     id SERIALPRIMARY KEY NOT NULL
     project_id  INTEGER REFERENCES projects(id) ON DELETE CASCADE, 

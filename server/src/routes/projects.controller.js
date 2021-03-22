@@ -5,8 +5,8 @@ var ProjectService = require('../services/projects.service');
 
 
 router.get('/', async function (req, res, next) {
-	const incidents = await ProjectService.retrieve()
-	res.json(incidents);
+	const projects = await ProjectService.retrieve()
+	res.json(projects);
 });
 
 router.get('/:id', async (req, res, next) => {
@@ -21,11 +21,9 @@ router.get('/:id', async (req, res, next) => {
 	}
 });
 
-
 router.post('/', async (req, res, next) => {
-	
-	const body = req.body;
 
+	const body = req.body;
 	try {
 		const incident = await ProjectService.create(body);
 
@@ -45,7 +43,6 @@ router.post('/', async (req, res, next) => {
 	}
 });
 
-
 router.put('/:id', async (req, res, next) => {
 	console.log(req.params.id, req.body)
 	try {
@@ -58,7 +55,6 @@ router.put('/:id', async (req, res, next) => {
 		return next(err);
 	}
 });
-
 
 router.delete('/:id', async (req, res, next) => {
 	try {

@@ -1,57 +1,86 @@
 import React, { useEffect, useState } from "react";
 
 import { Card } from "primereact/card";
-import { Button } from "primereact/button";
+import { Link } from "primereact/button";
 
 import "./MilestoneItem.scss";
 
-const MilestoneItem = ({ milestone }) => {
-    const [collapsed, setCollapsed] = useState(true);
+const MilestoneItem = ({ milestone, editHandler }) => {
+  const [collapsed, setCollapsed] = useState(true);
 
-    useEffect(() => { }, [collapsed]);
+  useEffect(() => {}, [collapsed]);
 
-    const subtitle = () =>
-        collapsed ? (
-            <div className="x-toolbar">
-                <span>{milestone.date}</span>
-                <span>
-                    <i
-                        className="pi pi-chevron-down"
-                        onClick={() => {
-                            setCollapsed(!collapsed);
-                        }}
-                    ></i>
-                    <i className="pi pi-link"></i>
-                </span>
-            </div>
-        ) : (
-                <div className="x-toolbar">
-                    <span>{milestone.date}</span>
-                    <span>
-                        <i
-                            className="pi pi-chevron-up"
-                            onClick={() => {
-                                setCollapsed(!collapsed);
-                            }}
-                        ></i>
-                        <i className="pi pi-link"></i>
-                    </span>
-                </div>
-            );
-    return (
-        <Card
-            title={milestone.status}
-            subTitle={subtitle}
-            className={`${collapsed ? "x-collapsed" : "x-expanded"}`}
-        >
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore
-            sed consequuntur error repudiandae numquam deserunt quisquam repellat
-            libero asperiores earum nam nobis, culpa ratione quam perferendis
-            esse, cupiditate neque quas!
-        </p>
-        </Card>
+  const onEdit = () => {
+    editHandler(milestone);
+  };
+
+  const subtitle = () =>
+    collapsed ? (
+      <div className="x-toolbar">
+        <span>{milestone.date}</span>
+        <span>
+          <i
+            className="pi pi-chevron-down"
+            onClick={() => {
+              setCollapsed(!collapsed);
+            }}
+          ></i>
+          <i className="pi pi-external-link"></i>
+          <i className="pi pi-pencil" onClick={onEdit}></i>
+        </span>
+      </div>
+    ) : (
+      <div className="x-toolbar">
+        <span>{milestone.date}</span>
+        <span>
+          <i
+            className="pi pi-chevron-up"
+            onClick={() => {
+              setCollapsed(!collapsed);
+            }}
+          ></i>
+          <i className="pi pi-link"></i>
+        </span>
+      </div>
     );
+  return (
+    <Card 
+      title={milestone.name}
+      subTitle={milestone.date}
+      className={`${collapsed ? "x-collapsed" : "x-expanded"}`}
+    >
+      <div className="x-content">
+      {milestone.description}
+      
+      {/* Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed
+        consequuntur error repudiandae numquam deserunt quisquam repellat libero
+        asperiores earum nam nobis, culpa ratione quam perferendis esse,
+        cupiditate neque quas! */}
+      </div>
+      <div className="x-toolbar">
+        <span>
+        {
+        collapsed ? 
+        <i
+            className="pi pi-chevron-down"
+            onClick={() => {
+              setCollapsed(!collapsed);
+            }}
+          ></i>
+        : 
+        <i
+            className="pi pi-chevron-up"
+            onClick={() => {
+              setCollapsed(!collapsed);
+            }}
+          ></i>
+        }
+          <i className="pi pi-external-link"></i>
+          <i className="pi pi-pencil" onClick={onEdit}></i>
+        </span>
+      </div>
+    </Card>
+  );
 };
 
 export default MilestoneItem;

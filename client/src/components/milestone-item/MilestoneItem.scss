@@ -5,10 +5,22 @@
     .p-card {overflow: hidden;
         &.x-collapsed {
             height: 100px;
+            .x-content { 
+                display: none;
+            }
+            .x-toolbar {
+                margin-top: -25px;
+            }
         }
 
         &.x-expanded {
-            height: 375px;
+            height: 350px;
+
+            .p-card-body {
+                height: inherit;
+                display: flex;
+                flex-direction: column;
+            }
         }
     }
 }
@@ -31,7 +43,7 @@
     &:nth-child(odd) {
         .x-toolbar {
             > span {
-                
+                text-align: end;
                 &:nth-of-type(2) { 
                     order: 2; 
                 }
@@ -46,6 +58,7 @@
     &:nth-child(even) {
         .x-toolbar {
             > span {
+                text-align: start;
                 &:nth-of-type(1) { 
                     order: 2; 
                     flex: 1;
@@ -55,5 +68,17 @@
                 }
             }
         }
+    }
+}
+
+
+.p-card .p-card-content {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    flex: 1;
+
+    .x-content { 
+        flex: 1;
     }
 }

@@ -7,12 +7,14 @@ class MilestoneModel {
 	constructor(obj) {
 		this.id = uuidv4();
 		this.projectId = uuidv4();
+		this.name = obj.name;
 		this.description = obj.description;
+		this.status = obj.status;
 		this.dateStart = obj.dateStart;
 		this.dateEnd = obj.dateEnd;
 		this.estimateDateEnd = obj.estimateDateEnd;
 		this.estimatePrice = obj.estimatePrice;
-		this.actuallPrice = obj.actuallPrice;
+		this.actualPrice = obj.actualPrice;
 		this.assets = [];
 		this.digitalSignatures = [];
 	}

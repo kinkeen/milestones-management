@@ -1,37 +1,36 @@
 var express = require('express');
 var router = express.Router();
-var MilestoneService = require('../services/milestone.service');
+var MilestonesService = require('../services/milestones.service');
 
-router.get('/', async function (req, res, next) {
-	const incidents = await MilestoneService.retrieve()
-	res.json(incidents);
-});
+// router.get('/', async function (req, res, next) {
+// 	const incidents = await MilestoneService.retrieve()
+// 	res.json(incidents);
+// });
 
-router.get('/:id', async (req, res, next) => {
-	try {
-		const incident = await MilestoneService.get(req.params.id);
+// router.get('/:id', async (req, res, next) => {
+// 	try {
+// 		const incident = await MilestoneService.get(req.params.id);
 
-		return res.json(incident);
-	}
-	catch (err) {
-		// unexpected error
-		return next(err);
-	}
-});
-
+// 		return res.json(incident);
+// 	}
+// 	catch (err) {
+// 		// unexpected error
+// 		return next(err);
+// 	}
+// });
 
 router.post('/', async (req, res, next) => {
 	
 	const body = req.body;
 
 	try {
-		const incident = await MilestoneService.create(body);
+		const milestone = await MilestonesService.create(body);
 
-		if (body.id != null) {
-			incident.id = body.id;
-		}
+		// if (body.id != null) {
+		// 	milestone.id = body.id;
+		// }
 
-		return res.status(201).json(incident);
+		return res.status(201).json(milestone);
 	}
 	catch (err) {
 		if (err.name === 'ValidationError') {
@@ -43,11 +42,10 @@ router.post('/', async (req, res, next) => {
 	}
 });
 
-
 router.put('/:id', async (req, res, next) => {
 	try {
-		const incident = await MilestoneService.update(req.params.id, req.body);
-
+		const incident = await MilestonesService.update(req.params.id, req.body);
+		
 		return res.json(incident);
 	}
 	catch (err) {
@@ -59,7 +57,7 @@ router.put('/:id', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
 	try {
-		const incident = await MilestoneService.delete(req.params.id);
+		const incident = await MilestonesService.delete(req.params.id);
 
 		return res.json({ success: true });
 	}
