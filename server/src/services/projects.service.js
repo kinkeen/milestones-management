@@ -43,24 +43,29 @@ class ProjectService {
 				T2.name AS m_name, 
 				T2.description AS m_description 
 					FROM projects AS T1 LEFT JOIN milestones AS T2 ON T1.id=T2.project_id
-			WHERE T1.id = $1
+			WHERE T1.id = ${id}
 		`;
 
-		return await db.query(query, [id])
+		return await db.query(query)
 			.then((result) => {
-				const milestones = result.rows.map(item => ({
-					id: item.m_id,
-					projectId: item.id,
-					name: item.m_name,
-					description: item.m_description,
-					status: item.m_status,
-					dateStart: item.m_date_start,
-					dateEnd: item.m_date_end,
-					estimateDateEnd: item.m_ede,
-					estimatePrice: item.m_estimate_cost,
-					actualPrice: item.m_actual_cost,
-					creationDate:item.m_creation_date
-				}));
+				let milestones = []
+				const row = result && result.rows && result.rows[0] || {};
+				
+				if (row.m_id) {
+					milestones = result.rows.map(item => ({
+						id: item.m_id,
+						projectId: item.id,
+						name: item.m_name,
+						description: item.m_description,
+						status: item.m_status,
+						dateStart: item.m_date_start,
+						dateEnd: item.m_date_end,
+						estimateDateEnd: item.m_ede,
+						estimatePrice: item.m_estimate_cost,
+						actualPrice: item.m_actual_cost,
+						creationDate: item.m_creation_date
+					})).sort((a, b) => a.id - b.id);
+				}
 
 				return result.rows.map(item => ({
 					id: item.id,
@@ -129,7 +134,7 @@ class ProjectService {
 		}
 
 		const query = `UPDATE projects SET ${fields.join(', ')} WHERE id=${id}`;
-		
+
 		return project;
 	}
 

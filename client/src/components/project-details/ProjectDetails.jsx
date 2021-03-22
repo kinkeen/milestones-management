@@ -18,25 +18,29 @@ import ProjectService from "../../services/ProjectService";
 import MilestoneItem from "../milestone-item/MilestoneItem";
 import MilestoneForm from "../milestone-form/MilestoneForm";
 //import Project from '../../core/models/project.model';
+import useSharedProject from '../../contexts/project-context'
+import Milestone from '../../core/models/milestone.model';
 
 const ProjectDetails = () => {
   const [visibleRight, setVisibleRight] = useState(false);
-  const [milestone, setMilestone] = useState({});
+  //const [milestone, setMilestone] = useState({});
   //const [project, setProject] = useState(new Project({}));
 
-  const [project, setProject] = useState({
-    id: "",
-    ownerId: "",
-    name: "",
-    description: "",
-    dateStart: "",
-    dateEnd: "",
-    estimateDateEnd: 0,
-    estimatePrice: 0,
-    actualPrice: 0,
-    milestones: [],
-    users: [],
-  });
+  const {project, setProject, milestone, setMilestone} = useSharedProject();
+
+  // const [project, setProject] = useState({
+  //   id: "",
+  //   ownerId: "",
+  //   name: "",
+  //   description: "",
+  //   dateStart: "",
+  //   dateEnd: "",
+  //   estimateDateEnd: 0,
+  //   estimatePrice: 0,
+  //   actualPrice: 0,
+  //   milestones: [],
+  //   users: [],
+  // });
 
   const [loading, setLoading] = useState(false);
   let { id } = useParams();
@@ -55,9 +59,9 @@ const ProjectDetails = () => {
   };
 
   const onNewMilestone = () => {
-    setMilestone({
+    setMilestone(new Milestone({
       projectId: project.id,
-    });
+    }));
     setVisibleRight(true);
   };
 
@@ -202,7 +206,9 @@ const ProjectDetails = () => {
         baseZIndex={1000000}
         onHide={() => setVisibleRight(false)}
       >
-        <MilestoneForm milestone={milestone} closeHandler={closeHandler} />
+
+      <MilestoneForm milestone={milestone}  closeHandler={closeHandler} />
+
       </Sidebar>
     </React.Fragment>
   );

@@ -17,11 +17,11 @@ class MilestonesService {
 	static create(milestone) {
 		const query = `INSERT INTO milestones (project_id, name, description,status,date_start,estimate_date_end ,date_end ,estimate_cost,actual_cost,creation_date)
 			VALUES
-				('${milestone.projectId}', '${milestone.description}', '${milestone.name}', 'init', '${milestone.dateStart}', '${milestone.estimateDateEnd}', '${milestone.dateEnd}', '${milestone.estimatePrice}', '${milestone.actualPrice}', '${(new Date()).toJSON()}')`;
+				('${milestone.projectId}', '${milestone.name}', '${milestone.description}', 'waiting_to_accept', '${milestone.dateStart}', '${milestone.estimateDateEnd}', '${milestone.dateEnd}', '${milestone.estimatePrice}', '${milestone.actualPrice}', '${(new Date()).toJSON()}') RETURNING *`;
 
 		return db.query(query)
 			.then((result) => {
-				return true;
+				return result && result.rows && result.rows[0] || {};
 			})
 			.catch(err => console.error('query error', err.stack));
 	}
@@ -53,28 +53,28 @@ class MilestonesService {
 			fields.push(`date_end = '${data.dateEnd}'`);
 		}
 
-		if (milestone.estimate_cost!= data.estimatePrice) {
+		if (milestone.estimate_cost != data.estimatePrice) {
 			fields.push(`estimate_cost = '${data.estimatePrice}'`);
 		}
 
-		if (milestone.actual_cost!= data.actualPrice) {
+		if (milestone.actual_cost != data.actualPrice) {
 			fields.push(`actual_cost = '${data.actualPrice}'`);
 		}
 
-		if (milestone.creation_date!= data.creationDate) {
+		if (milestone.creation_date != data.creationDate) {
 			fields.push(`creation_date = '${data.creationDate}'`);
 		}
 
-		if (milestone.status!= data.status) {
+		if (milestone.status != data.status) {
 			fields.push(`status = '${data.status}'`);
 		}
 
 		if (fields.length > 0) {
-			const query = `UPDATE milestones SET ${fields.join(', ')} WHERE id=${id}`;
+			const query = `UPDATE milestones SET ${fields.join(', ')} WHERE id=${id} RETURNING *`;
 
 			return db.query(query)
 				.then((result) => {
-					return result;
+					return result && result.rows && result.rows[0] || {};
 				})
 				.catch(err => console.error('query error', err.stack));
 		}

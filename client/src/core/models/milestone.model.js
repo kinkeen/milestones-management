@@ -16,7 +16,6 @@ export default class Milestone {
         this.estimatePrice = milestone.estimatePrice || 0.0;
         this.actualPrice = milestone.actualPrice || 0.0;
         this.creationDate = milestone.creationDate || new Date();
-
     }
 
 }

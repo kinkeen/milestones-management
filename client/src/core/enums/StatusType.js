@@ -1,4 +1,5 @@
 const StatusType = Object.freeze({
+
     INIT:   'init',
     WAITING_TO_ACCEPT: 'waiting_to_accept',
     ASK_MODIFICATION:  'ask_modification',
@@ -11,7 +12,7 @@ const StatusType = Object.freeze({
     END:  'end',
     CANCELLED: 'cancelled'
 
-/*    INIT:   Symbol('init'),
+    /*INIT:   Symbol('init'),
     WAITING_TO_ACCEPT: Symbol('waiting_to_accept'),
     ASK_MODIFICATION:  Symbol('ask_modification'),
     ACCEPTED:  Symbol('accepted'),
