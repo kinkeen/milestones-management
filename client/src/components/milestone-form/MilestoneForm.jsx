@@ -259,7 +259,7 @@ const MilestoneForm = (props) => {
         
 
         console.log(signatureRef.current.toData())
-        const url = signatureRef.current.toDataURL()
+        const url = signatureRef.current.toDataURL('')
         window.open(url)
         // console.log(signatureRef.current.fromDataURL())
         // console.log(signatureRef.current.getCanvas())
