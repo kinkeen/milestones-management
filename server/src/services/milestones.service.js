@@ -7,9 +7,12 @@ class MilestonesService {
 
 	static async get(id) {
 		const query = `SELECT * FROM milestones WHERE id = ${id} ORDER BY creation_date ASC`
+
+		// const query = `select T1.*, T2.user_id, T2.signature from milestones AS T1 LEFT JOIN digital_signatures AS T2 ON T1.id = T2.milestone_id WHERE  T1.id = ${id}`
+		
 		return await db.query(query)
 			.then((result) => {
-				return result;
+				return result && result.rows && result.rows[0] || {};
 			})
 			.catch(err => console.error('query error', err.stack));
 	}

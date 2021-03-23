@@ -30,6 +30,10 @@
     }
 }
 
+a:-webkit-any-link {
+    color: #495057;
+}
+
 .x-project-details {
     width: 90vw;
     margin: 30px auto;

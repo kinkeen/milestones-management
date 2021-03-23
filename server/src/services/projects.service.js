@@ -139,9 +139,13 @@ class ProjectService {
 	}
 
 	static delete(id) {
-		const idx = projects.data.findIndex(project => project.id == id);
+		const query = `DELETE FROM projects WHERE id=${id} RETURNING id`;
 
-		projects.data.splice(idx, 1);
+		return db.query(query)
+			.then((result) => {
+				return id;
+			})
+			.catch(err => console.error('query error', err.stack));
 	}
 }
 

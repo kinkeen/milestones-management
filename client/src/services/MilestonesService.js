@@ -14,11 +14,11 @@ export default class MilestonesService {
         return axios.get(`${this.url}/${id}`).then(res => res.data);
     }
 
-    put(id, milestone) {
-        
-        console.log("id=",id);
-        console.log("milestone=",milestone);
+    // details(id) {
+    //     return axios.get(`${this.url}/${id}`).then(res => res.data);
+    // }
 
+    put(id, milestone) {
         return axios.put(`${this.url}/${id}`, milestone);
     }
 
@@ -28,5 +28,9 @@ export default class MilestonesService {
 
     delete(id) {
         return axios.delete(`${this.url}/${id}`);
+    }
+
+    signature(data) {
+        return axios.post(`${this.url}/signature`, data);
     }
 }

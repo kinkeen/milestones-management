@@ -8,7 +8,7 @@ import {
     Calendar,
     FileUpload,
     Dialog,
-    Tooltip, 
+    Tooltip,
     Card
 } from '../../helpers/ui.modue';
 
@@ -18,20 +18,25 @@ import './MilestoneForm.scss';
 import UserContext from '../../contexts/user-context';
 import MilestonesService from '../../services/MilestonesService';
 import useSharedProject from '../../contexts/project-context';
+import Milestone from '../../core/models/milestone.model'
 
 const MilestoneForm = (props) => {
     const [displaySignature, setDisplaySignature] = useState(false);
     const [displayReason, setDisplayReason] = useState(false);
-    const user = useContext(UserContext);
+    const [waiting, setWaiting] = useState(false);
     const [reason, setReason] = useState('');
+    const user = useContext(UserContext);
     const signatureRef = useRef();
     const { project, setProject, milestone, setMilestone } = useSharedProject();
     const service = new MilestonesService();
 
+    //#region Hooks
     useEffect(() => {
         console.log('MilestoneForm: ', user, project, milestone)
     }, [])
+    //#endregion Hooks
 
+    //#region Methods
     const onInputChange = (e, name) => {
         const val = (e.target && e.target.value) || '';
 
@@ -52,34 +57,71 @@ const MilestoneForm = (props) => {
         return moment.utc(date).toDate();
     }
 
+    const onBasicUploadAuto = () => {
+
+    }
+
     const clear = () => {
         signatureRef.current.clear();
     }
 
-    const save = () => {
-        service.put(milestone.id, milestone)
-        // signatureRef.current.toBlob((blob) => {
-        //     console.log(blob)
-        //     // const reader = new FileReader();
-        //     // reader.addEventListener('loadend', () => {
-        //     //   const arrayBuffer = reader.result;
-        //     //   bufferByteLen.textContent = arrayBuffer.byteLength + ' bytes.';
+    const save = (status) => {
 
-        //     //   // Dispay Blob content in an Image.
-        //     //   const blob = new Blob([arrayBuffer], {type: mimeType});
-        //     //   imageOut.src = URL.createObjectURL(blob);
-        //     // });
-        //     // reader.readAsArrayBuffer(blob);
-        // }, 'image/png');
-        // console.log(signatureRef.current.toDataURL('image/jpeg', 1))
-        // //         .toDataURL('image/png')
-        // // })
-    }
+        switch (status) {
+            case StatusType.INIT:
+                return service.post(milestone);
 
-    const init = () => {
-        service.post(milestone).then(response => {
-            project.milestones.push(response.data);
-            setProject(project);
+            case StatusType.WAITING_TO_ACCEPT:
+                status = StatusType.ASK_MODIFICATION;
+                break;
+
+            case StatusType.ASK_MODIFICATION:
+                status = StatusType.WAITING_TO_ACCEPT;
+                break;
+
+            case StatusType.ACCEPTED:
+
+                break;
+            case StatusType.STARTED:
+
+                break;
+            case StatusType.IN_PROGRESS:
+
+                break;
+            case StatusType.FINISHED:
+
+                break;
+            case StatusType.REJECTED:
+
+                break;
+
+            case StatusType.CONFIRMED:
+                break;
+
+            case StatusType.END:
+
+                break;
+            case StatusType.CANCELLED:
+
+                break;
+            default:
+                break;
+        }
+
+        return new Promise((resolve, reject) => {
+
+            setWaiting(true);
+
+            const request = { ...milestone };
+
+            request.status = status;
+
+            service.put(milestone.id, request).then((response) => {
+
+                setWaiting(false);
+
+                resolve(response);
+            });
         });
     }
 
@@ -91,139 +133,8 @@ const MilestoneForm = (props) => {
         setDisplaySignature(true)
     }
 
-
-    const onBasicUploadAuto = () => {
-
-    }
-
     const close = () => {
         props.closeHandler();
-    }
-
-    const renderStatusButtons = (status) => {
-
-        let right = "";
-
-        switch (status) {
-            case StatusType.INIT:
-
-                right = (
-                    <React.Fragment>
-                        <Button label="INIT" className="p-button-raised p-button-text" onClick={init}></Button>
-                        {<Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>}
-                    </React.Fragment>
-                );
-                break
-            case StatusType.WAITING_TO_ACCEPT:
-                right = (
-                    <React.Fragment>
-                        <Button label="REJECT" className="p-button-raised p-button-text" onClick={reject}></Button>
-                        <Button label="ACCEPT" className="p-button-raised p-button-text" onClick={accept}></Button>
-                    </React.Fragment>
-                );
-                break
-            case StatusType.ASK_MODIFICATION:
-                right = (
-                    <React.Fragment>
-                        <Button label="REPLAY" className="p-button-raised p-button-text" onClick={save}></Button>
-                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
-                    </React.Fragment>
-                );
-                break
-            case StatusType.ACCEPTED:
-                console.log("4 - ACCEPTED")
-                right = (
-                    <React.Fragment>
-                        <Button label="ACCEPT" className="p-button-raised p-button-text" onClick={accept}></Button>
-                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
-                    </React.Fragment>
-                );
-                break
-            case StatusType.STARTED:
-                console.log("5 - STARTED")
-                right = (
-                    <React.Fragment>
-                        <Button label="START" className="p-button-raised p-button-text" onClick={save}></Button>
-                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
-                    </React.Fragment>
-                );
-                break
-            case StatusType.IN_PROGRESS:
-                console.log("6 - IN_PROGRESS")
-                right = (
-                    <React.Fragment>
-                        <Button label="Save" className="p-button-raised p-button-text" onClick={save}></Button>
-                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
-                    </React.Fragment>
-                );
-                break
-            case StatusType.FINISHED:
-                console.log("7 - FINISHED")
-                right = (
-                    <React.Fragment>
-                        <Button label="Save" className="p-button-raised p-button-text" onClick={save}></Button>
-                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
-                    </React.Fragment>
-                );
-                break
-            case StatusType.REJECTED:
-                console.log("8 - REJECTED")
-                right = (
-                    <React.Fragment>
-                        <Button label="Save" className="p-button-raised p-button-text" onClick={save}></Button>
-                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
-                    </React.Fragment>
-                );
-                break
-            case StatusType.CONFIRMED:
-                console.log("9 - CONFIRMED")
-                right = (
-                    <React.Fragment>
-                        <Button label="Save" className="p-button-raised p-button-text" onClick={save}></Button>
-                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
-                    </React.Fragment>
-                );
-                break
-            case StatusType.END:
-                right = (
-                    <React.Fragment>
-                        <Button label="Save" className="p-button-raised p-button-text" onClick={save}></Button>
-                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
-                    </React.Fragment>
-                );
-                break
-            case StatusType.CANCELLED:
-                right = (
-                    <React.Fragment>
-                        <Button label="Save" className="p-button-raised p-button-text" onClick={save}></Button>
-                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
-                    </React.Fragment>
-                );
-                break
-            default:
-                right = (
-                    <React.Fragment>
-                        <Button label="INIT" className="p-button-raised p-button-text" onClick={init}></Button>
-                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear}></Button>
-                    </React.Fragment>
-                )
-        }
-        return (
-            <React.Fragment>
-
-                <footer>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span>
-                        {right}
-                        </span>
-                        <span>
-                        <Button label="CLOSE" className="p-button-raised p-button-text" onClick={close}></Button>
-                        </span>
-                    </div>
-                </footer>
-
-            </React.Fragment>
-        )
     }
 
     const dialogFuncMap = {
@@ -243,6 +154,240 @@ const MilestoneForm = (props) => {
         dialogFuncMap[`${name}`](false);
     }
 
+    const clearSignature = () => {
+        signatureRef.current.clear()
+    }
+
+    const saveSignature = () => {
+        if (signatureRef.current.isEmpty()) {
+            alert('Please provide a signature then save')
+            return;
+        }
+
+       setWaiting(true);
+
+        service.signature({
+            milestoneId: milestone.id,
+            userId: 1, // The ID of current user
+            data: signatureRef.current.getTrimmedCanvas().toDataURL('image/png')
+        }).then(() => {
+            save(StatusType.ACCEPTED).then((response) => {
+                setDisplaySignature(false);
+                setMilestone(new Milestone(response.data));
+            });
+        });
+
+
+        // const url = signatureRef.current.getTrimmedCanvas().toDataURL('image/png');
+
+        // fetch(url)
+        //     .then(res => res.arrayBuffer())
+        //     .then((buffer) => {
+        //         console.log(buffer)
+        //         console.log(window.btoa(buffer))
+        //         // service.signature({
+        //         //     milestoneId: milestone.id,
+        //         //     userId: 1, // The ID of current user
+        //         //     data: new Uint8Array(buffer)
+        //         // }).then(() => {
+        //         //     save(StatusType.ACCEPTED).then((response) => {
+        //         //         setDisplaySignature(false);
+        //         //         setMilestone(new Milestone(response.data));
+        //         //     });
+        //         // });
+        //     });
+
+        //     fetch(url)
+        //     .then(res => res.blob())
+        //     .then((buffer) => {
+        //         console.log(buffer)
+        //         console.log(window.btoa(buffer))
+        //         // service.signature({
+        //         //     milestoneId: milestone.id,
+        //         //     userId: 1, // The ID of current user
+        //         //     data: new Uint8Array(buffer)
+        //         // }).then(() => {
+        //         //     save(StatusType.ACCEPTED).then((response) => {
+        //         //         setDisplaySignature(false);
+        //         //         setMilestone(new Milestone(response.data));
+        //         //     });
+        //         // });
+        //     });
+
+        //     // decode('AcAAFBAO5Az....AQAAAFBCO5gT/AEAABT', 'base64')
+    }
+
+    const saveReason = () => {
+        save(StatusType.WAITING_TO_ACCEPT).then(response => {
+            const milestone = new Milestone(response.data);
+            if (project.milestones instanceof Array) {
+                const item = project.milestones.find(item => item.id == milestone.id);
+                const index = project.milestones.indexOf(item);
+                project.milestones.splice(index, 1);
+                project.milestones.push(milestone);
+                setProject(project);
+                setMilestone(milestone);
+                setDisplayReason(false);
+            }
+        })
+    }
+    //#endregion Methods
+
+    //#region JSX
+    const renderStatusButtons = (status) => {
+
+        let right = "";
+
+        switch (status) {
+            case StatusType.INIT:
+                right = (
+                    <React.Fragment>
+                        <Button label="SAVE" className="p-button-raised p-button-text" onClick={() => {
+                            save(StatusType.INIT).then((response) => {
+                                const milestone = new Milestone(response.data);
+                                project.milestones.push(milestone);
+                                setProject(project);
+                                setMilestone(milestone);
+                            });
+                        }} disabled={waiting}></Button>
+                        {<Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear} disabled={waiting}></Button>}
+                    </React.Fragment>
+                );
+                break
+            case StatusType.WAITING_TO_ACCEPT:
+                right = (
+                    <React.Fragment>
+                        <Button label="REJECT" className="p-button-raised p-button-text" onClick={reject} disabled={waiting}></Button>
+                        <Button label="ACCEPT" className="p-button-raised p-button-text" onClick={accept} disabled={waiting}></Button>
+                    </React.Fragment>
+                );
+                break
+            case StatusType.ASK_MODIFICATION:
+                right = (
+                    <React.Fragment>
+                        <Button label="REPLAY" className="p-button-raised p-button-text" onClick={() => {
+                            save(StatusType.ASK_MODIFICATION).then((response) => {
+                                setMilestone(new Milestone(response.data));
+                            });
+                        }} disabled={waiting}></Button>
+                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear} disabled={waiting}></Button>
+                    </React.Fragment>
+                );
+                break
+            case StatusType.ACCEPTED:
+                right = (
+                    <React.Fragment>
+                        <Button label="ACCEPT" className="p-button-raised p-button-text" onClick={accept} disabled={waiting}></Button>
+                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear} disabled={waiting}></Button>
+                    </React.Fragment>
+                );
+                break
+            case StatusType.STARTED:
+                right = (
+                    <React.Fragment>
+                        <Button label="START" className="p-button-raised p-button-text" onClick={() => {
+                            save(StatusType.STARTED).then((response) => {
+                                setMilestone(new Milestone(response.data));
+                            });
+                        }} disabled={waiting}></Button>
+                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear} disabled={waiting}></Button>
+                    </React.Fragment>
+                );
+                break
+            case StatusType.IN_PROGRESS:
+                right = (
+                    <React.Fragment>
+                        <Button label="Save" className="p-button-raised p-button-text" onClick={() => {
+                            save(StatusType.IN_PROGRESS).then((response) => {
+                                setMilestone(new Milestone(response.data));
+                            });
+                        }} disabled={waiting}></Button>
+                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear} disabled={waiting}></Button>
+                    </React.Fragment>
+                );
+                break
+            case StatusType.FINISHED:
+                right = (
+                    <React.Fragment>
+                        <Button label="Save" className="p-button-raised p-button-text" onClick={() => {
+                            save(StatusType.FINISHED).then((response) => {
+                                setMilestone(new Milestone(response.data));
+                            });
+                        }} disabled={waiting}></Button>
+                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear} disabled={waiting}></Button>
+                    </React.Fragment>
+                );
+                break
+            case StatusType.REJECTED:
+                right = (
+                    <React.Fragment>
+                        <Button label="Save" className="p-button-raised p-button-text" onClick={() => {
+                            save(StatusType.REJECTED).then((response) => {
+                                setMilestone(new Milestone(response.data));
+                            });
+                        }} disabled={waiting}></Button>
+                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear} disabled={waiting}></Button>
+                    </React.Fragment>
+                );
+                break
+            case StatusType.CONFIRMED:
+                right = (
+                    <React.Fragment>
+                        <Button label="Save" className="p-button-raised p-button-text" onClick={() => {
+                            save(StatusType.CONFIRMED)
+                        }} disabled={waiting}></Button>
+                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear} disabled={waiting}></Button>
+                    </React.Fragment>
+                );
+                break
+            case StatusType.END:
+                right = (
+                    <React.Fragment>
+                        <Button label="Save" className="p-button-raised p-button-text" onClick={() => {
+                            save(StatusType.END).then((response) => {
+                                setMilestone(new Milestone(response.data));
+                            });
+                        }} disabled={waiting}></Button>
+                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear} disabled={waiting}></Button>
+                    </React.Fragment>
+                );
+                break
+            case StatusType.CANCELLED:
+                right = (
+                    <React.Fragment>
+                        <Button label="Save" className="p-button-raised p-button-text" onClick={() => {
+                            save(StatusType.CANCELLED).then((response) => {
+                                setMilestone(new Milestone(response.data));
+                            });
+                        }} disabled={waiting}></Button>
+                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear} disabled={waiting}></Button>
+                    </React.Fragment>
+                );
+                break
+            default:
+                right = (
+                    <React.Fragment>
+                        <Button label="SAVE" className="p-button-raised p-button-text" onClick={() => {
+                            save(StatusType.INIT)
+                        }} disabled={waiting}></Button>
+                        <Button label="CANCEL" className="p-button-raised p-button-text" onClick={clear} disabled={waiting}></Button>
+                    </React.Fragment>
+                )
+        }
+        return (
+            <React.Fragment>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>
+                        {right}
+                    </span>
+                    <span>
+                        <Button label="CLOSE" className="p-button-raised p-button-text" onClick={close} disabled={waiting}></Button>
+                    </span>
+                </div>
+            </React.Fragment>
+        )
+    }
+
     const renderFooter = (name) => {
         return (
             <div>
@@ -252,115 +397,77 @@ const MilestoneForm = (props) => {
         );
     }
 
-    const clearSignature = () => {
-        signatureRef.current.clear()
-    }
-
-    const saveSignature = () => {
-        // if (signatureRef.current.isEmpty()) {
-        //     alert('Please provide a signature then save')
-        //     return;
-        // }
-        // setDisplaySignature(false);
-        
-
-        console.log(signatureRef.current.toData())
-        const url = signatureRef.current.toDataURL('')
-        window.open(url)
-        // console.log(signatureRef.current.fromDataURL())
-        // console.log(signatureRef.current.getCanvas())
-        // console.log(signatureRef.current.getSignaturePad())
-        // console.log(signatureRef.current.getTrimmedCanvas())
-    }
-
-    const saveReason = () => {
-        // Save comment with owner id => user.id, milestone_id => milestone.id
-        // ask_modification
-
-        service.put(milestone.id, {
-            status: 'ask_modification'
-        }).then(response => {
-            const milestone = project.milestones.find(item => item.id == response.data.id);
-            for(let key in response.data) {
-                if (key in milestone && milestone[key] != response.data[key]) {
-                    milestone[key] = response.data[key];
-                }
-            }
-            setProject(project);
-        })
-    }
-
     return (
         <React.Fragment>
             <Card className="x-milestone-form">
-              <Fieldset legend="MILESTONE FORM">
-                <main className="p-fluid">
+                <Fieldset legend="MILESTONE FORM">
+                    <main className="p-fluid">
 
-                    <div className="p-field p-grid">
-                        <label htmlFor="projectname" className="p-col-12 p-md-3">Name</label>
-                        <div className="p-col-6 p-md-9">
-                            <InputText id="name" type="text" value={milestone.name} onChange={(e) => onInputChange(e, 'name')} required />
+                        <div className="p-field p-grid">
+                            <label htmlFor="projectname" className="p-col-12 p-md-3">Name</label>
+                            <div className="p-col-6 p-md-9">
+                                <InputText id="name" type="text" value={milestone.name} onChange={(e) => onInputChange(e, 'name')} required />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="p-field p-grid">
-                        <label htmlFor="description" className="p-col-12 p-md-3">Description</label>
-                        <div className="p-col-12 p-md-9 ">
-                            <InputTextarea id="description" value={milestone.description} onChange={(e) => onInputChange(e, 'description')} required type="text" required rows={5} />
+                        <div className="p-field p-grid">
+                            <label htmlFor="description" className="p-col-12 p-md-3">Description</label>
+                            <div className="p-col-12 p-md-9 ">
+                                <InputTextarea id="description" value={milestone.description} onChange={(e) => onInputChange(e, 'description')} required type="text" required rows={5} />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="p-field p-grid">
-                        <label htmlFor="dateStart" className="p-col-12 p-md-3">Date Start</label>
-                        <div className="p-col-12 p-md-9 ">
-                            <Calendar id="dateStart" value={string2Date(milestone.dateStart)} onChange={(e) => onDateChange(e.value, 'dateStart')} mask="99/99/9999" />
+                        <div className="p-field p-grid">
+                            <label htmlFor="dateStart" className="p-col-12 p-md-3">Date Start</label>
+                            <div className="p-col-12 p-md-9 ">
+                                <Calendar id="dateStart" value={string2Date(milestone.dateStart)} onChange={(e) => onDateChange(e.value, 'dateStart')} mask="99/99/9999" />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="p-field p-grid">
-                        <label htmlFor="estimateDateEnd" className="p-col-4 p-md-3">Estimate Date End</label>
-                        <div className="p-col-8 p-md-9 ">
-                            <Calendar id="estimateDateEnd" value={string2Date(milestone.estimateDateEnd)} onChange={(e) => onDateChange(e.value, 'estimateDateEnd')} mask="99/99/9999" />
+                        <div className="p-field p-grid">
+                            <label htmlFor="estimateDateEnd" className="p-col-4 p-md-3">Estimate Date End</label>
+                            <div className="p-col-8 p-md-9 ">
+                                <Calendar id="estimateDateEnd" value={string2Date(milestone.estimateDateEnd)} onChange={(e) => onDateChange(e.value, 'estimateDateEnd')} mask="99/99/9999" />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="p-field p-grid">
-                        <label htmlFor="dateEnd" className="p-col-12 p-md-3">Date End</label>
-                        <div className="p-col-12 p-md-9 ">
-                            <Calendar id="dateEnd" value={string2Date(milestone.dateEnd)} onChange={(e) => onDateChange(e.value, 'dateEnd')} mask="99/99/9999" />
+                        <div className="p-field p-grid">
+                            <label htmlFor="dateEnd" className="p-col-12 p-md-3">Date End</label>
+                            <div className="p-col-12 p-md-9 ">
+                                <Calendar id="dateEnd" value={string2Date(milestone.dateEnd)} onChange={(e) => onDateChange(e.value, 'dateEnd')} mask="99/99/9999" />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="p-field p-grid">
-                        <label htmlFor="estimatePrice" className="p-col-4 p-md-3">Estimate Price</label>
-                        <div className="p-col-8 p-md-9 ">
-                            <InputText id="estimatePrice" type="text" value={milestone.estimatePrice} onChange={(e) => onInputChange(e, 'estimatePrice')} />
+                        <div className="p-field p-grid">
+                            <label htmlFor="estimatePrice" className="p-col-4 p-md-3">Estimate Price</label>
+                            <div className="p-col-8 p-md-9 ">
+                                <InputText id="estimatePrice" type="text" value={milestone.estimatePrice} onChange={(e) => onInputChange(e, 'estimatePrice')} />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="p-field p-grid">
-                        <label htmlFor="actualPrice" className="p-col-4 p-md-3">Actual Price</label>
-                        <div className="p-col-8 p-md-9 ">
-                            <InputText id="actualPrice" type="text" value={milestone.actualPrice} onChange={(e) => onInputChange(e, 'actualPrice')} />
+                        <div className="p-field p-grid">
+                            <label htmlFor="actualPrice" className="p-col-4 p-md-3">Actual Price</label>
+                            <div className="p-col-8 p-md-9 ">
+                                <InputText id="actualPrice" type="text" value={milestone.actualPrice} onChange={(e) => onInputChange(e, 'actualPrice')} />
 
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="p-field p-grid">
-                        <label className="p-col-4 p-md-3">Attach File</label>
-                        <div className="p-col-8 p-md-9">
-                            <FileUpload mode="basic" name="demo[]" url="./upload.php" accept="image/*" maxFileSize={1000000} onUpload={onBasicUploadAuto} auto chooseLabel="Browse" />
+                        <div className="p-field p-grid">
+                            <label className="p-col-4 p-md-3">Attach File</label>
+                            <div className="p-col-8 p-md-9">
+                                <FileUpload mode="basic" name="demo[]" url="./upload.php" accept="image/*" maxFileSize={1000000} onUpload={onBasicUploadAuto} auto chooseLabel="Browse" />
+                            </div>
                         </div>
-                    </div>
-                </main>
-                <footer>
-                    {renderStatusButtons(milestone.status)}
-                </footer>
-            </Fieldset>
-           </Card>
+                    </main>
+                    <footer>
+                        {renderStatusButtons(milestone.status)}
+                    </footer>
+                </Fieldset>
+            </Card>
 
             <Dialog header="Reason" visible={displayReason} style={{ width: '50vw' }} footer={(
-                <Button label="SAVE" icon="pi pi-check" onClick={saveReason} autoFocus />
+                <Button label="SAVE" icon="pi pi-check" onClick={saveReason} autoFocus disabled={waiting} />
             )} onHide={() => onHide('displayReason')} baseZIndex={1000}>
                 <div className="p-field p-grid">
                     <div className="p-col-12 ">
@@ -372,7 +479,7 @@ const MilestoneForm = (props) => {
 
             <Dialog header="Signature" visible={displaySignature} style={{ width: '660px' }} footer={
                 (
-                    <Button label="SAVE" icon="pi pi-check" onClick={saveSignature} autoFocus />
+                    <Button label="SAVE" icon="pi pi-check" onClick={saveSignature} autoFocus disabled={waiting} />
                 )
             } onHide={() => setDisplaySignature(false)} baseZIndex={1000}>
                 <div className="p-field p-grid">
@@ -390,6 +497,7 @@ const MilestoneForm = (props) => {
             <Tooltip target=".x-tooltip" />
         </React.Fragment>
     )
+    //#endregion JSX
 }
 
 export default MilestoneForm;

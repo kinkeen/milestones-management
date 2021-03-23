@@ -4,7 +4,7 @@
     margin-top: 20px;
     .p-card {overflow: hidden;
         &.x-collapsed {
-            height: 100px;
+            height: 110px;
             .x-content { 
                 display: none;
             }
@@ -53,6 +53,10 @@
                 }
             }
         }
+
+        .x-content { 
+            text-align: start;
+        }
     }
 
     &:nth-child(even) {
@@ -67,6 +71,10 @@
                     order: 1; 
                 }
             }
+        }
+
+        .x-content { 
+            text-align: start;
         }
     }
 }
