@@ -8,7 +8,7 @@ import {
   Divider
 } from '../../helpers/ui.modue';
 
-
+import './MainPage.scss';
 import GuardedRoute from '../../helpers/GuardedRoute'
 import LoginPage from '../login-page/LoginPage';
 import AdminPage from '../admin-page/AdminPage';
@@ -90,7 +90,7 @@ function MainPage() {
   );
   return (
 
-    <div>
+    <div >
       <Router>
         {isAutheticated &&
           <div>
@@ -100,12 +100,12 @@ function MainPage() {
 
               <div className="p-tieredmenu p-component">
 
-                <Divider align="left">
+                {/* <Divider align="left" className="x-divider"> */}
                   <div className="p-d-inline-flex p-ai-center">
-                      <i className="p-menuitem-icon pi pi-fw pi-file"></i>
-                      <b>Projects</b>
+                      <i className="pi-home pi pi-fw pi-file"></i>
+                      <b>PROJECTS</b>
                   </div>  
-                </Divider>      
+                {/* </Divider>       */}
                 <div>
                     <Link to='/projects'>
                       <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>Projects List </span>
@@ -119,38 +119,38 @@ function MainPage() {
                 </div> 
 
 
-                <Divider align="left">
+                {/* <Divider align="left" className="x-divider" > */}
                   <div className="p-d-inline-flex p-ai-center">
-                      <i className="p-menuitem-icon pi pi-fw pi-file"></i>
-                      <b>Milestones</b>
+                      <i className="pi-calendar-times pi pi-fw pi-file"></i>
+                      <b>MILESTONS</b>
                   </div>  
-                </Divider>      
+                {/* </Divider>       */}
                 <div>
-                    <Link to='/projects'>
+                    <Link to='/projects' className="p-dissabled-link">
                       <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>Milestones List </span>
                     </Link>
                 </div>
 
                 <div>
-                    <Link to='/projects/new'>
+                    <Link to='/projects/new' className="p-dissabled-link">
                     <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)} >New Milestones</span>
                   </Link>
                 </div> 
 
                                
-                <Divider align="left">
-                  <div className="p-d-inline-flex p-ai-center">
+                {/* <Divider align="left" className="x-divider"> */}
+                  <div className="p-d-inline-flex p-ai-center" disabled>  
                       <i className="pi pi-users p-mr-2"></i>
-                      <b>Users</b>
+                      <b>USERS</b>
                   </div>  
-                </Divider>      
+                {/* </Divider>       */}
                   <div>                        
-                    <Link to="/users">
+                    <Link to="/users" className="p-dissabled-link">
                       <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>Users List</span>
                     </Link>
                   </div>
                   <div>
-                    <Link to="/users/new">
+                    <Link to="/users/new" className="p-dissabled-link">
                       <span className="p-menuitem-text" onClick={() => setVisibleLeft(false)}>New Users</span>
                     </Link>
                   </div>

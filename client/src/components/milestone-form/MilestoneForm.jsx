@@ -8,8 +8,10 @@ import {
     Calendar,
     FileUpload,
     Dialog,
-    Tooltip
+    Tooltip, 
+    Card
 } from '../../helpers/ui.modue';
+
 import moment from 'moment';
 import StatusType from '../../core/enums/StatusType';
 import './MilestoneForm.scss';
@@ -208,14 +210,18 @@ const MilestoneForm = (props) => {
         }
         return (
             <React.Fragment>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>
+
+                <footer>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>
                         {right}
-                    </span>
-                    <span>
+                        </span>
+                        <span>
                         <Button label="CLOSE" className="p-button-raised p-button-text" onClick={close}></Button>
-                    </span>
-                </div>
+                        </span>
+                    </div>
+                </footer>
+
             </React.Fragment>
         )
     }
@@ -286,7 +292,8 @@ const MilestoneForm = (props) => {
 
     return (
         <React.Fragment>
-            <Fieldset legend="Milestone" >
+            <Card className="x-milestone-form">
+              <Fieldset legend="MILESTONE FORM">
                 <main className="p-fluid">
 
                     <div className="p-field p-grid">
@@ -341,7 +348,7 @@ const MilestoneForm = (props) => {
 
                     <div className="p-field p-grid">
                         <label className="p-col-4 p-md-3">Attach File</label>
-                        <div className="p-col-8 p-md-9 ">
+                        <div className="p-col-8 p-md-9">
                             <FileUpload mode="basic" name="demo[]" url="./upload.php" accept="image/*" maxFileSize={1000000} onUpload={onBasicUploadAuto} auto chooseLabel="Browse" />
                         </div>
                     </div>
@@ -350,6 +357,7 @@ const MilestoneForm = (props) => {
                     {renderStatusButtons(milestone.status)}
                 </footer>
             </Fieldset>
+           </Card>
 
             <Dialog header="Reason" visible={displayReason} style={{ width: '50vw' }} footer={(
                 <Button label="SAVE" icon="pi pi-check" onClick={saveReason} autoFocus />

@@ -10,6 +10,7 @@ import {
   Button,
   Toolbar,
   Sidebar,
+  Fieldset
 } from "../../helpers/ui.modue";
 
 import moment from "moment";
@@ -72,18 +73,7 @@ const ProjectDetails = () => {
 
   const leftContents = (
     <React.Fragment>
-      <Button
-        label="New Milestone"
-        icon="pi pi-plus"
-        className="p-button-rounded"
-        onClick={onNewMilestone}
-      />
-      <Button
-        label="Save Changes"
-        icon="pi pi-plus"
-        className="p-button-rounded"
-        onClick={onNewMilestone}
-      />
+      <Button label="NEW MILESTONE" icon="pi pi-plus" className="p-button-raised p-button-text" onClick={onNewMilestone}></Button>
     </React.Fragment>
   );
 
@@ -96,7 +86,11 @@ const ProjectDetails = () => {
 
   return (
     <React.Fragment>
+
       <Card className="x-project-details">
+
+        <Fieldset legend="PROJECT DETAILS" >
+        
         <div className="p-fluid">
           <div className="p-field p-grid">
             <label htmlFor="id" className="p-col-12 p-md-3">
@@ -196,6 +190,7 @@ const ProjectDetails = () => {
           )}
           content={(item) => <MilestoneItem milestone={item} editHandler={onEditMilestone} />}
         />
+        </Fieldset>  
       </Card>
 
       <Sidebar

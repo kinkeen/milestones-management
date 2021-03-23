@@ -5,7 +5,8 @@ import {
     Fieldset, 
     InputText, 
     InputTextarea, 
-    Calendar, 
+    Calendar,
+    Card 
 } from '../../helpers/ui.modue';
 
 import moment from 'moment'
@@ -76,9 +77,10 @@ const ProjectForm = (props) => {
 
 
         <React.Fragment>
-            <Fieldset legend="Project" >
 
-                <div className="p-fluid">
+            <Card className="x-project-form">
+              <Fieldset legend="PROJECT FORM">
+                 <div className="p-fluid">
                     <div className="p-field p-grid">
                         <label htmlFor="id" className="p-col-12 p-md-3">ID</label>
                         <div className="p-col-6 p-md-9">
@@ -129,14 +131,22 @@ const ProjectForm = (props) => {
                         </div>
                     </div>
                 </div>
-                <footer>
-                    <Button label="Save" className="p-button-rounded" onClick={doSave}></Button>
-                    <Button label="Cancel" className="p-button-rounded p-button-secondary" onClick={() => {
-                        doClose()
-                    }}></Button>
-                </footer>
-            </Fieldset>
 
+                <footer className="x-project-footer-form">
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>
+                        <Button label="SAVE" className="p-button-raised p-button-text" onClick={doSave}></Button>
+                        <Button label="CANCLE" className="p-button-raised p-button-text" onClick={() => {
+                            doClose()
+                        }}></Button>
+                        </span>
+                        <span>
+                            <Button label="CLOSE" className="p-button-raised p-button-text" onClick={() => {doClose()}}></Button>
+                        </span>
+                    </div>
+                </footer>
+                </Fieldset> 
+            </Card>
         </React.Fragment>
     )
 

@@ -2,6 +2,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    background-color: rgb(232, 238, 240);
 }
 a {
     text-decoration: none;
@@ -22,3 +23,29 @@ a {
 .p-menuitem-text {
     margin-left:80px
 }
+
+.p-sidebar {
+    background-color: rgb(232, 238, 240);
+}
+
+.p-tieredmenu {
+    background-color: transparent;
+}
+
+.p-d-inline-flex {
+    background-color: transparent;
+    padding-top: 30px;
+}
+
+
+.p-fieldset {
+    background-color: transparent;
+}
+
+.p-dissabled-link {
+    color: currentColor;
+    cursor: not-allowed;
+    opacity: 0.5;
+    text-decoration: none;
+}
+

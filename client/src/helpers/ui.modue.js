@@ -12,8 +12,15 @@ import { Menu } from 'primereact/menu';
 import { FileUpload } from 'primereact/fileupload';
 import { Dialog } from 'primereact/dialog'
 import { Tooltip } from 'primereact/tooltip'
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Toast } from 'primereact/toast';
+
 
 export {
+    Toast, 
+    Column, 
+    DataTable, 
     Timeline,
     Card,
     InputTextarea,

@@ -2,17 +2,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link, Redirect, useRouteMatch } from "react-router-dom";
 import moment from 'moment'
 
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Toast } from 'primereact/toast';
-import { Button } from 'primereact/button';
-import { Toolbar } from 'primereact/toolbar';
-import { Dialog } from 'primereact/dialog';
-import { InputText } from 'primereact/inputtext';
-import { Sidebar } from 'primereact/sidebar';
+import {
+  Toast, 
+  Column, 
+  DataTable, 
+  Card,
+  InputText,
+  Button,
+  Toolbar,
+  Sidebar,
+  Fieldset
+} from "../../helpers/ui.modue";
+
 
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
-
 import { confirmDialog } from 'primereact/confirmdialog'; // To use confirmDialog method
 
 import './ProjectList.scss';
@@ -25,6 +28,7 @@ import conf from '../../helpers/Configuration';
 
 
 const ProjectList = () => {
+
   const [projects, setProjects] = useState(null);
   const [visibleRight, setVisibleRight] = useState(false);
   const [project, setProject] = useState({});
@@ -61,7 +65,7 @@ const ProjectList = () => {
   const leftToolbarTemplate = () => {
     return (
       <React.Fragment>
-          <h3 className="p-m-0">Manage Projects</h3>        
+          <Button label="NEW PROJECT" icon="pi pi-plus" className="p-button-raised p-button-text" onClick={openNew}></Button>        
       </React.Fragment>
     )
   }
@@ -90,10 +94,8 @@ const ProjectList = () => {
     return formatCurrency(rowData.actualPrice);
   }
 
-
   const header = (
     <div className="table-header">
-      <Button label="New" icon="pi pi-plus" className="p-button-raised p-button-rounded" onClick={openNew} />
       <span className="p-input-icon-left">
         <i className="pi pi-search" />
         <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
@@ -138,18 +140,18 @@ const ProjectList = () => {
     });
   }
 
-
   const actionBodyTemplate = (rowData) => {
     return (
       <span className="actions-column">
         <Button type="button" icon="pi pi-trash" className=" p-button-outlined p-button-secondary" datarow={rowData.id} onClick={doDelete}></Button>
+        <Link to={`${url}/${rowData.id}`}>
+          <Button type="button" icon="pi pi-external-link" className=" p-button-outlined p-button-secondary"></Button>
+        </Link>
         <Button type="button" icon="pi pi-pencil" className=" p-button-outlined p-button-secondary" onClick={() => {
           doEdit(rowData);
         }}></Button>
 
-        <Link to={`${url}/${rowData.id}`}>
-          <Button type="button" icon="pi pi-external-link" className=" p-button-outlined p-button-secondary"></Button>
-        </Link>
+        
       </span>
     );
   }
@@ -171,11 +173,19 @@ const ProjectList = () => {
 
        <Route path={path}>
 
+
+       <Card className="x-project-list">
+        
+        <Fieldset legend="PROJECT LIST" >
+  
+
           <div className="datatable-crud-demo">
             <Toast ref={toast} />
 
-            <div className="card">
+            {/* <div className="card" > */}
+
               <Toolbar className="p-mb-4" left={leftToolbarTemplate}></Toolbar>
+
               <DataTable ref={dt}
                 value={projects}
                 selection={selectedProjects}
@@ -198,12 +208,17 @@ const ProjectList = () => {
                   bodyStyle={{ textAlign: 'center', overflow: 'visible' }}
                 />
               </DataTable>
-            </div>
+            {/* </div> */}
 
             <Sidebar visible={visibleRight} position="right" showCloseIcon={false} style={{ 'width': '50vw' }} baseZIndex={1000000} onHide={() => setVisibleRight(false)}>
               <ProjectForm project={project} closeHandler={closeHandler} />
             </Sidebar>
           </div>
+
+        </Fieldset >
+  
+        </Card>
+  
         </Route>
     </Switch>
     
