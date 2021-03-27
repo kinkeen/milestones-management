@@ -1,11 +1,20 @@
 import React, { useState } from "react";
 import { useBetween } from "use-between";
 
+
+
+import ProjectService from "../services/ProjectService";
+
 // Make a custom hook with your future shared state
-const useProject = () => {
+const useProject = async () => {
+
+  const [projects, setProjects] = useState([]);
   const [project, setProject] = useState({});
   const [milestone, setMilestone] = useState({});
+
+
   return {
+    projects, setProjects,
     project, setProject,
     milestone, setMilestone
   };

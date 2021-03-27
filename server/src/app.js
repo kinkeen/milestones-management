@@ -9,6 +9,8 @@ const cookieSession = require('cookie-session');
 const projects = require('./routes/projects.controller');
 const milestones = require('./routes/milestones.controller');
 const users = require('./routes/users.controller');
+const main = require('./routes/main.controller');
+const auth = require('./routes/auth.controller');
 
 let reporter = function (type, ...rest)
 {
@@ -54,7 +56,11 @@ app.use(function(req, res, next) {
 });
 
 app.use('/api/projects', projects);
-app.use('/api/milestones', milestones)
-app.use('/api/users', users)
+app.use('/api/milestones', milestones);
+app.use('/api/users', users);
+app.use('/auth', auth)
+app.use('/', main);
+
+
 
 module.exports = app;

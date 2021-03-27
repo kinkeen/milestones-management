@@ -30,7 +30,7 @@ CREATE TABLE users (
 CREATE TABLE projects (
   id SERIAL PRIMARY KEY NOT NULL,
   name VARCHAR(50) NOT NULL,
-  description VARCHAR(255) NOT NULL,
+  description VARCHAR(4000) NULL,
   owner_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   date_start DATE,
   estimate_date_end DATE,
@@ -84,7 +84,9 @@ CREATE TABLE milestones (
     date_end DATE,
     estimate_cost decimal(12,2),
     actual_cost decimal(12,2), 
-    creation_date DATE
+    creation_date DATE,
+    description VARCHAR(4000),
+    name VARCHAR(50)
 );
 
 CREATE TYPE MineTypes AS ENUM ('image/gif', 'image/apng', 'image/flif', 'image/webp', 'image/x-mng', 'image/jpeg', 'image/png', 'application/pdf', 'application/msword (.doc)');
@@ -102,7 +104,7 @@ CREATE TABLE digital_signatures (
   id SERIAL PRIMARY KEY NOT NULL,
   milestone_id INTEGER REFERENCES milestones(id) ON DELETE CASCADE,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  signature bytea  NOT NULL,
+  signature TEXT  NOT NULL,
   creation_date DATE
 );
 

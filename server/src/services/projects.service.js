@@ -85,6 +85,7 @@ class ProjectService {
 	}
 
 	static create(project) {
+		console.log(project)
 		const query = `INSERT INTO projects (name , description , owner_id , date_start , estimate_date_end , date_end , estimate_cost , actual_cost)
 			VALUES
 				('${project.name}', '${project.description}', 1, '${(new Date()).toJSON()}', '${(new Date()).toJSON()}', '${(new Date()).toJSON()}', '${project.estimatePrice}', '${project.actualPrice}')`;

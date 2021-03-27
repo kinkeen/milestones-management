@@ -95,7 +95,7 @@ function MainPage() {
         {isAutheticated &&
           <div>
             <Toolbar left={leftContents} right={rightContents} />
-            <Sidebar visible={visibleLeft} baseZIndex={1000000} onHide={() => setVisibleLeft(false)} showCloseIcon={false}>
+            <Sidebar visible={visibleLeft} onHide={() => setVisibleLeft(false)} showCloseIcon={false}>
 
 
               <div className="p-tieredmenu p-component">

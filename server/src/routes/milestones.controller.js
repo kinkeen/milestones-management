@@ -27,6 +27,7 @@ router.get('/:id', async (req, res, next) => {
 router.post('/signature', async (req, res, next) => {
 	const body = req.body;
 	try {
+		console.log(body)
 		const milestone = await SignatureService.create(body);
 		return res.status(201).json(true);
 	}

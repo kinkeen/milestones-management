@@ -4,7 +4,7 @@ import moment from 'moment';
 
 export default class Milestone {
 
-    constructor(milestone) {
+    constructor(milestone = {}) {
         this.id = milestone.id || '';
         this.projectId = milestone.projectId || '';
         this.name = milestone.name || '';        

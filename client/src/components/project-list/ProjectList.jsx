@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BrowserRouter as Router, Switch, Route, Link, Redirect, useRouteMatch } from "react-router-dom";
+import { Switch, Route, Link, useRouteMatch, useHistory } from "react-router-dom";
 import moment from 'moment'
 
 import {
-  Toast, 
-  Column, 
-  DataTable, 
+  Toast,
+  Column,
+  DataTable,
   Card,
   InputText,
   Button,
@@ -15,39 +15,42 @@ import {
 } from "../../helpers/ui.modue";
 
 
-import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
-import { confirmDialog } from 'primereact/confirmdialog'; // To use confirmDialog method
-
-import './ProjectList.scss';
-
+import { confirmPopup } from 'primereact/confirmpopup';
 import ProjectService from "../../services/ProjectService";
 import ProjectForm from '../project-form/ProjectForm';
 import ProjectDetails from '../../components/project-details/ProjectDetails';
 
 import conf from '../../helpers/Configuration';
 
+import useSharedProject from '../../contexts/project-context'
 
-const ProjectList = () => {
+import './ProjectList.scss';
 
-  const [projects, setProjects] = useState(null);
-  const [visibleRight, setVisibleRight] = useState(false);
+
+const ProjectList = (props) => {
+  const [projects, setProjects] = useState([]);
   const [project, setProject] = useState({});
+  // const { projects, setProjects, project, setProject } = useSharedProject();
+
+  const history = useHistory();
+  const [visibleRight, setVisibleRight] = useState(false);
   const [selectedProjects, setSelectedProjects] = useState([]);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [submitted, setSubmitted] = useState(false);
-
   const toast = useRef(null);
   const dt = useRef(null);
+
   const service = new ProjectService();
 
-
   let { path, url } = useRouteMatch();
+
 
   useEffect(() => {
     service.retrive().then((data) => {
       setProjects(data);
     });
-  }, []);
+  }, [])
+
 
   const formatCurrency = (value) => {
     if (value) {
@@ -65,7 +68,7 @@ const ProjectList = () => {
   const leftToolbarTemplate = () => {
     return (
       <React.Fragment>
-          <Button label="NEW PROJECT" icon="pi pi-plus" className="p-button-raised p-button-text" onClick={openNew}></Button>        
+        <Button label="NEW PROJECT" icon="pi pi-plus" className="p-button-raised p-button-text" onClick={openNew}></Button>
       </React.Fragment>
     )
   }
@@ -140,18 +143,28 @@ const ProjectList = () => {
     });
   }
 
+  // const goProject = (rowData) => {
+  //   // setProject(rowData)
+  //   history.push(`${url}/${rowData.id}`);
+  //   //<Link to={`${url}/${rowData.id}`}></Link>
+
+  // }
+
   const actionBodyTemplate = (rowData) => {
     return (
       <span className="actions-column">
         <Button type="button" icon="pi pi-trash" className=" p-button-outlined p-button-secondary" datarow={rowData.id} onClick={doDelete}></Button>
+
         <Link to={`${url}/${rowData.id}`}>
           <Button type="button" icon="pi pi-external-link" className=" p-button-outlined p-button-secondary"></Button>
         </Link>
+
+
         <Button type="button" icon="pi pi-pencil" className=" p-button-outlined p-button-secondary" onClick={() => {
           doEdit(rowData);
         }}></Button>
 
-        
+
       </span>
     );
   }
@@ -164,66 +177,56 @@ const ProjectList = () => {
   }
 
   return (
-
     <Switch>
-      
-       <Route path={`${path}/:id`}>
-            <ProjectDetails />
-        </Route>
+      <Route path={`${path}/:id`}>
+        <ProjectDetails />
+      </Route>
 
-       <Route path={path}>
+      <Route path={path}>
 
 
-       <Card className="x-project-list">
-        
-        <Fieldset legend="PROJECT LIST" >
-  
+        <Card className="x-project-list">
+          <Fieldset legend="PROJECT LIST">
+            <div className="datatable-crud-demo">
+              <Toast ref={toast} />
 
-          <div className="datatable-crud-demo">
-            <Toast ref={toast} />
-
-            {/* <div className="card" > */}
+              {/* <div className="card" > */}
 
               <Toolbar className="p-mb-4" left={leftToolbarTemplate}></Toolbar>
+              {projects.length > 0 &&
+                <DataTable ref={dt}
+                  value={projects}
+                  selection={selectedProjects}
+                  onSelectionChange={(e) => setSelectedProjects(e.value)}
+                  dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
+                  paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} projects"
+                  globalFilter={globalFilter}
+                  header={header}>
 
-              <DataTable ref={dt}
-                value={projects}
-                selection={selectedProjects}
-                onSelectionChange={(e) => setSelectedProjects(e.value)}
-                dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
-                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} projects"
-                globalFilter={globalFilter}
-                header={header}>
+                  <Column field="name" header="Name" body={nameBodyTemplate} sortable></Column>
+                  <Column field="description" header="Description" body={descriptionBodyTemplate} sortable></Column>
+                  <Column field="dateStart" header="Date Start" body={dateStartBodyTemplate} sortable></Column>
+                  <Column field="dateEnd" header="Date End" body={dateEndBodyTemplate} sortable></Column>
+                  <Column field="estimatePrice" header="Estimate Price" body={estimatePriceBodyTemplate} sortable></Column>
+                  <Column field="actualPrice" header="Actual Price" body={actualPricePriceBodyTemplate} sortable></Column>
+                  <Column
+                    body={actionBodyTemplate}
+                    headerStyle={{ width: '10em', textAlign: 'center' }}
+                    bodyStyle={{ textAlign: 'center', overflow: 'visible' }}
+                  />
+                </DataTable>}
+              {/* </div> */}
 
-                <Column field="name" header="Name" body={nameBodyTemplate} sortable></Column>
-                <Column field="description" header="Description" body={descriptionBodyTemplate} sortable></Column>
-                <Column field="dateStart" header="Date Start" body={dateStartBodyTemplate} sortable></Column>
-                <Column field="dateEnd" header="Date End" body={dateEndBodyTemplate} sortable></Column>
-                <Column field="estimatePrice" header="Estimate Price" body={estimatePriceBodyTemplate} sortable></Column>
-                <Column field="actualPrice" header="Actual Price" body={actualPricePriceBodyTemplate} sortable></Column>
-                <Column
-                  body={actionBodyTemplate}
-                  headerStyle={{ width: '10em', textAlign: 'center' }}
-                  bodyStyle={{ textAlign: 'center', overflow: 'visible' }}
-                />
-              </DataTable>
-            {/* </div> */}
-
-            <Sidebar visible={visibleRight} position="right" showCloseIcon={false} style={{ 'width': '50vw' }} baseZIndex={1000000} onHide={() => setVisibleRight(false)}>
-              <ProjectForm project={project} closeHandler={closeHandler} />
-            </Sidebar>
-          </div>
-
-        </Fieldset >
-  
+              <Sidebar visible={visibleRight} position="right" showCloseIcon={false} style={{ 'width': '50vw' }} onHide={() => setVisibleRight(false)}>
+                <ProjectForm project={project} closeHandler={closeHandler} />
+              </Sidebar>
+            </div>
+          </Fieldset >
         </Card>
-  
-        </Route>
+      </Route>
     </Switch>
-    
-    );
-   
+  );
 };
 
 export default ProjectList;

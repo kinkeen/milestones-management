@@ -25,14 +25,17 @@ const MilestoneForm = (props) => {
     const [displayReason, setDisplayReason] = useState(false);
     const [waiting, setWaiting] = useState(false);
     const [reason, setReason] = useState('');
+
     const user = useContext(UserContext);
     const signatureRef = useRef();
-    const { project, setProject, milestone, setMilestone } = useSharedProject();
+    const [milestone, setMilestone] = useState();
+    const [project, setProject] = useState();
+    // const { project, setProject, milestone, setMilestone } = useSharedProject();
     const service = new MilestonesService();
 
     //#region Hooks
     useEffect(() => {
-        console.log('MilestoneForm: ', user, project, milestone)
+        setMilestone(new Milestone(props.milestone))
     }, [])
     //#endregion Hooks
 
@@ -164,7 +167,7 @@ const MilestoneForm = (props) => {
             return;
         }
 
-       setWaiting(true);
+        setWaiting(true);
 
         service.signature({
             milestoneId: milestone.id,
@@ -388,87 +391,82 @@ const MilestoneForm = (props) => {
         )
     }
 
-    const renderFooter = (name) => {
-        return (
-            <div>
-                <Button label="CANCEL" icon="pi pi-times" onClick={() => onHide(name)} className="p-button-raised p-button-text" />
-                <Button label="SAVE" icon="pi pi-check" onClick={() => onHide(name)} autoFocus className="p-button-raised p-button-text" />
-            </div>
-        );
-    }
-
     return (
         <React.Fragment>
-            <Card className="x-milestone-form">
-                <Fieldset legend="MILESTONE FORM">
-                    <main className="p-fluid">
+            { milestone &&
+                (
+                    <Card className="x-milestone-form">
+                        <Fieldset legend="MILESTONE FORM">
+                            <main className="p-fluid">
 
-                        <div className="p-field p-grid">
-                            <label htmlFor="projectname" className="p-col-12 p-md-3">Name</label>
-                            <div className="p-col-6 p-md-9">
-                                <InputText id="name" type="text" value={milestone.name} onChange={(e) => onInputChange(e, 'name')} required />
-                            </div>
-                        </div>
+                                <div className="p-field p-grid">
+                                    <label htmlFor="projectname" className="p-col-12 p-md-3">Name</label>
+                                    <div className="p-col-6 p-md-9">
+                                        <InputText id="name" type="text" value={milestone.name} onChange={(e) => onInputChange(e, 'name')} required />
+                                    </div>
+                                </div>
 
-                        <div className="p-field p-grid">
-                            <label htmlFor="description" className="p-col-12 p-md-3">Description</label>
-                            <div className="p-col-12 p-md-9 ">
-                                <InputTextarea id="description" value={milestone.description} onChange={(e) => onInputChange(e, 'description')} required type="text" required rows={5} />
-                            </div>
-                        </div>
+                                <div className="p-field p-grid">
+                                    <label htmlFor="description" className="p-col-12 p-md-3">Description</label>
+                                    <div className="p-col-12 p-md-9 ">
+                                        <InputTextarea id="description" value={milestone.description} onChange={(e) => onInputChange(e, 'description')} required type="text" required rows={5} />
+                                    </div>
+                                </div>
 
-                        <div className="p-field p-grid">
-                            <label htmlFor="dateStart" className="p-col-12 p-md-3">Date Start</label>
-                            <div className="p-col-12 p-md-9 ">
-                                <Calendar id="dateStart" value={string2Date(milestone.dateStart)} onChange={(e) => onDateChange(e.value, 'dateStart')} mask="99/99/9999" />
-                            </div>
-                        </div>
+                                <div className="p-field p-grid">
+                                    <label htmlFor="dateStart" className="p-col-12 p-md-3">Date Start</label>
+                                    <div className="p-col-12 p-md-9 ">
+                                        <Calendar id="dateStart" value={string2Date(milestone.dateStart)} onChange={(e) => onDateChange(e.value, 'dateStart')} mask="99/99/9999" />
+                                    </div>
+                                </div>
 
-                        <div className="p-field p-grid">
-                            <label htmlFor="estimateDateEnd" className="p-col-4 p-md-3">Estimate Date End</label>
-                            <div className="p-col-8 p-md-9 ">
-                                <Calendar id="estimateDateEnd" value={string2Date(milestone.estimateDateEnd)} onChange={(e) => onDateChange(e.value, 'estimateDateEnd')} mask="99/99/9999" />
-                            </div>
-                        </div>
+                                <div className="p-field p-grid">
+                                    <label htmlFor="estimateDateEnd" className="p-col-4 p-md-3">Estimate Date End</label>
+                                    <div className="p-col-8 p-md-9 ">
+                                        <Calendar id="estimateDateEnd" value={string2Date(milestone.estimateDateEnd)} onChange={(e) => onDateChange(e.value, 'estimateDateEnd')} mask="99/99/9999" />
+                                    </div>
+                                </div>
 
-                        <div className="p-field p-grid">
-                            <label htmlFor="dateEnd" className="p-col-12 p-md-3">Date End</label>
-                            <div className="p-col-12 p-md-9 ">
-                                <Calendar id="dateEnd" value={string2Date(milestone.dateEnd)} onChange={(e) => onDateChange(e.value, 'dateEnd')} mask="99/99/9999" />
-                            </div>
-                        </div>
+                                <div className="p-field p-grid">
+                                    <label htmlFor="dateEnd" className="p-col-12 p-md-3">Date End</label>
+                                    <div className="p-col-12 p-md-9 ">
+                                        <Calendar id="dateEnd" value={string2Date(milestone.dateEnd)} onChange={(e) => onDateChange(e.value, 'dateEnd')} mask="99/99/9999" />
+                                    </div>
+                                </div>
 
-                        <div className="p-field p-grid">
-                            <label htmlFor="estimatePrice" className="p-col-4 p-md-3">Estimate Price</label>
-                            <div className="p-col-8 p-md-9 ">
-                                <InputText id="estimatePrice" type="text" value={milestone.estimatePrice} onChange={(e) => onInputChange(e, 'estimatePrice')} />
-                            </div>
-                        </div>
+                                <div className="p-field p-grid">
+                                    <label htmlFor="estimatePrice" className="p-col-4 p-md-3">Estimate Price</label>
+                                    <div className="p-col-8 p-md-9 ">
+                                        <InputText id="estimatePrice" type="text" value={milestone.estimatePrice} onChange={(e) => onInputChange(e, 'estimatePrice')} />
+                                    </div>
+                                </div>
 
-                        <div className="p-field p-grid">
-                            <label htmlFor="actualPrice" className="p-col-4 p-md-3">Actual Price</label>
-                            <div className="p-col-8 p-md-9 ">
-                                <InputText id="actualPrice" type="text" value={milestone.actualPrice} onChange={(e) => onInputChange(e, 'actualPrice')} />
+                                <div className="p-field p-grid">
+                                    <label htmlFor="actualPrice" className="p-col-4 p-md-3">Actual Price</label>
+                                    <div className="p-col-8 p-md-9 ">
+                                        <InputText id="actualPrice" type="text" value={milestone.actualPrice} onChange={(e) => onInputChange(e, 'actualPrice')} />
 
-                            </div>
-                        </div>
+                                    </div>
+                                </div>
 
-                        <div className="p-field p-grid">
-                            <label className="p-col-4 p-md-3">Attach File</label>
-                            <div className="p-col-8 p-md-9">
-                                <FileUpload mode="basic" name="demo[]" url="./upload.php" accept="image/*" maxFileSize={1000000} onUpload={onBasicUploadAuto} auto chooseLabel="Browse" />
-                            </div>
-                        </div>
-                    </main>
-                    <footer>
-                        {renderStatusButtons(milestone.status)}
-                    </footer>
-                </Fieldset>
-            </Card>
+                                <div className="p-field p-grid">
+                                    <label className="p-col-4 p-md-3">Attach File</label>
+                                    <div className="p-col-8 p-md-9">
+                                        <FileUpload mode="basic" name="demo[]" url="./upload.php" accept="image/*" maxFileSize={1000000} onUpload={onBasicUploadAuto} auto chooseLabel="Browse" />
+                                    </div>
+                                </div>
+                            </main>
+                            <footer>
+                                {renderStatusButtons(milestone.status)}
+                            </footer>
+                        </Fieldset>
+                    </Card>
+                )
+            }
 
             <Dialog header="Reason" visible={displayReason} style={{ width: '50vw' }} footer={(
                 <Button label="SAVE" icon="pi pi-check" onClick={saveReason} autoFocus disabled={waiting} />
-            )} onHide={() => onHide('displayReason')} baseZIndex={1000}>
+            )} onHide={() => onHide('displayReason')}>
                 <div className="p-field p-grid">
                     <div className="p-col-12 ">
                         Please write a reason of your rejection
@@ -481,7 +479,7 @@ const MilestoneForm = (props) => {
                 (
                     <Button label="SAVE" icon="pi pi-check" onClick={saveSignature} autoFocus disabled={waiting} />
                 )
-            } onHide={() => setDisplaySignature(false)} baseZIndex={1000}>
+            } onHide={() => setDisplaySignature(false)}>
                 <div className="p-field p-grid">
                     <div className="p-col-12 ">
                         <span>This action required your signature</span>

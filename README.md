@@ -61,3 +61,8 @@ Open http://localhost:3000 to view it in the browser.
 + "nodemon": "^2.0.7"
 
 ## Screnshots
+
+!["screenshot of Application"](https://github.com/kinkeen/scheduler/blob/master/public/images/.png)
+!["screenshot of Add Project"](https://github.com/kinkeen/scheduler/blob/master/public/images/.png)
+!["screenshot of Add Milestone"](https://github.com/kinkeen/scheduler/blob/master/public/images/.png)
+!["screenshot of  "](https://github.com/kinkeen/scheduler/blob/master/public/images/.png)

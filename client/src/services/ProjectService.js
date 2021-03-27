@@ -19,6 +19,7 @@ export default class ProjectService {
     }
 
     post(project) {
+        debugger
         return axios.post(`${this.url}`, project);
     }
 
